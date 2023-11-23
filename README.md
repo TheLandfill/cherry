@@ -1,5 +1,5 @@
-![Logo for Cherry](logo-small.png)
-# Cherry
+![Logo for Cherry](medium-full-logo.png)
+---
 
 I don't know what to call this, but it's basically everything I need to
 implement working finite fields. If anyone can think of a better name, let me
