@@ -1,14 +1,15 @@
-# I Don't Have a Name
+# Cherry
 
 I don't know what to call this, but it's basically everything I need to
-implement working finite fields.
+implement working finite fields. If anyone can think of a better name, let me
+know.
 
 ## Setup
 
 It's a header-only library, so the steps are trivial.
 
 1.  Download the repository or just the [include directory](include/).
-1.  Include what you need or just `#include "include/gf.hpp"`.
+1.  Include what you need or just `#include "gf.hpp"`.
 
 ## Use
 
