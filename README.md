@@ -1,3 +1,4 @@
+![Logo for Cherry](logo-small.png)
 # Cherry
 
 I don't know what to call this, but it's basically everything I need to
