@@ -30,35 +30,27 @@ use GF1\<p\> below.
 
 ```cpp
 #include "gf.hpp"
+#include <iostream>
 
 int main() {
     GF1<5> a = 3;
     GF1<5> b = 4;
-    std::cout <<
-    "Variable Values\n"
-    "----------------------------------------\n";
-    std::cout << "a\t= " << a << "\n";
-    std::cout << "b\t= " << b << "\n\n";
-    std::cout <<
-    "Arithmetic Operations\n"
-    "----------------------------------------\n";
-    std::cout << "a + b\t= " << a + b << "\n";
-    std::cout << "a - b\t= " << a - b << "\n";
-    std::cout << "a b\t= " << a * b << "\n";
-    std::cout << "a / b\t= " << a / b << "\n\n";
-    std::cout << "Powers of a\n"
-    "----------------------------------------\n";
-    for (int i = -5; i <= 5; i++) {
-        std::cout << "a^" << i << "\t= " << (a^i) << "\n";
-    }
-    std::cout << "\n"
-    "Powers of b\n"
-    "----------------------------------------\n";
-    for (int i = -5; i <= 5; i++) {
-        std::cout << "b^" << i << "\t= " << (b^i) << "\n";
-    }
-    std::cout << one<GF1<5>>() << "\n";
-    std::cout << zero<GF1<5>>() << "\n";
+
+    auto d = a - b;
+    auto e = c * d;
+    auto f = a * a - (b^2);
+    auto should_be_zero = e - f;
+    auto g = c / d;
+
+
+    std::cout << "a = " << a << "\n";
+    std::cout << "b = " << b << "\n";
+    std::cout << "c = " << c << "\n";
+    std::cout << "d = " << d << "\n";
+    std::cout << "e = " << e << "\n";
+    std::cout << "f = " << f << "\n";
+    std::cout << "g = " << g << "\n";
+    std::cout << "0 = " << should_be_zero << "\n";
     return 0;
 }
 ```
@@ -72,41 +64,28 @@ CANNOT HAVE ELEMENTS WITH DIFFERENT IRREDUCIBLE POLYNOMIALS INTERACT***.
 
 int main() {
     Polynomial<GF1<5>> irreducible_poly{{1, 4, 3, 1}};
+
     Polynomial<GF1<5>> poly1{{2, 4, 1}};
-    Polynomial<GF1<5>> poly2{{2, 4, 1}};
+    Polynomial<GF1<5>> poly2{{3, 1, 2}};
+
     GF<5> a{irreducible_poly, poly1};
     GF<5> b{irreducible_poly, poly2};
-    std::cout <<
-    "Variable Values\n"
-    "----------------------------------------\n";
-    std::cout << "a\t= " << a << "\n";
-    std::cout << "b\t= " << b << "\n\n";
-    std::cout <<
-    "Arithmetic Operations\n"
-    "----------------------------------------\n";
-    std::cout << "a + b\t= " << a + b << "\n";
-    std::cout << "a - b\t= " << a - b << "\n";
-    std::cout << "a b\t= " << a * b << "\n";
-    std::cout << "a / b\t= " << a / b << "\n\n";
-    std::cout << "Powers of a\n"
-    "----------------------------------------\n";
-    for (int i = -5; i <= 5; i++) {
-        std::cout << "a^" << i << "\t= " << (a^i) << "\n";
-    }
-    std::cout << "\n"
-    "Powers of b\n"
-    "----------------------------------------\n";
-    for (int i = -5; i <= 5; i++) {
-        std::cout << "b^" << i << "\t= " << (b^i) << "\n";
-    }
-    // You have to specify the irreducible polynomial for GF<p> to work since
-    // you at least need to know the order of the field, which means I can't
-    // come up with an all-purpose zero function. You need to specify the type
-    // and the irreducible polynomial. Here, we're specifying it explicitly.
-    std::cout << one<GF<5>>(nullptr, &irreducible_poly) << "\n";
-    // Here, we're specifying it implicitly since the compiler can infer the
-    // type from the type of a.
-    std::cout << zero(&a, &irreducible_poly) << "\n";
+
+    auto d = a - b;
+    auto e = c * d;
+    auto f = a * a - (b^2);
+    auto should_be_zero = e - f;
+    auto g = c / d;
+
+
+    std::cout << "a = " << a << "\n";
+    std::cout << "b = " << b << "\n";
+    std::cout << "c = " << c << "\n";
+    std::cout << "d = " << d << "\n";
+    std::cout << "e = " << e << "\n";
+    std::cout << "f = " << f << "\n";
+    std::cout << "g = " << g << "\n";
+    std::cout << "0 = " << should_be_zero << "\n";
     return 0;
 }
 ```
