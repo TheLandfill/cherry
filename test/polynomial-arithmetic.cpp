@@ -23,6 +23,26 @@ void test_floating_point_polynomials() {
 	std::cout << u << "\n";
 	std::cout << v << "\n";
 	std::cout << should_also_be_zero << "\n";
+	auto p_diff_2 = p.differentiate(2);
+	std::cout << "  p: " << p << "\n";
+	p.to_derivative();
+	std::cout << " p': " << p << "\n";
+	p.to_derivative();
+	std::cout << "p'': " << p << "\n";
+	std::cout << "p'': " << p_diff_2 << "\n";
+	auto q_diff_5 = q.differentiate(5);
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	std::cout << q_diff_5 << "\n";
 }
 
 void test_gf5_polynomials() {
@@ -46,9 +66,32 @@ void test_gf5_polynomials() {
 	std::cout << u << "\n";
 	std::cout << v << "\n";
 	std::cout << should_also_be_zero << "\n";
+	auto p_diff_2 = p.differentiate(2);
+	std::cout << "  p: " << p << "\n";
+	p.to_derivative();
+	std::cout << " p': " << p << "\n";
+	p.to_derivative();
+	std::cout << "p'': " << p << "\n";
+	std::cout << "p'': " << p_diff_2 << "\n";
+	auto q_diff_5 = q.differentiate(5);
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	q.to_derivative();
+	std::cout << q << "\n";
+	std::cout << q_diff_5 << "\n";
 }
 
 int main() {
+	std::cout << "--------------------------------------------------------------------------------\n";
+	std::cout << __FILE__ << "\n";
+	std::cout << "--------------------------------------------------------------------------------\n";
 	test_floating_point_polynomials();
 	test_gf5_polynomials();
 	return 0;

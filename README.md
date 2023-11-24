@@ -120,12 +120,16 @@ int main() {
     -   **General RREF:** Sure hope your matrix isn't singular. If it is,
         you're out of luck because I'm not checking for singular matrices.
 -   **Polynomials**
-    -   **Addition and Subtraction:** Wasn't too difficult to implement.
-    -   **Accessing the Coefficients:** Same as with a vector.
+    -   **Ring Operations:** Addition, subtraction, multiplication, and
+        negation.
+    -   **Accessing the Coefficients:** Same as with a vector. Note that you
+        will get zero if you try to access a coefficient greater than the
+        degree.
     -   **Evaluating for Arbitrary Input:** If you can reasonably plug a value
         into a polynomial, you can evaluate the polynomial at that value. For
         example, you can plug a square matrix into a polynomial so long as you
         can multiply the matrix by the coefficients.
+    -   **Formal Derivatives:** Wasn't too difficult to implement.
 
 ## Missing Features
 
@@ -154,7 +158,8 @@ Here's a list of all the features the code does not support:
 -   **Matrices**
     -   **Dealing with Poorly Behaved Floating Point Matrices:** Currently, I'm
         checking if certain elements are zero because I've been working with
-        finite fields. For floats, I should instead use a better algorithm.
+        finite fields. For floats, I should instead use a better algorithm or
+        even just detect the condition number.
     -   **Determinants:** Not implemented yet as I'm looking into good
         algorithms to calculate the determinant.
     -   **Characteristic Polynomials:** Not implemented yet as I'm looking into
@@ -166,10 +171,8 @@ Here's a list of all the features the code does not support:
         sort of problem.
     -   **Root Finding:** Same as factoring. I'd have to implement Newton's
         Method for real/complex numbers and finite field stuff.
-    -   **Polynomial Multiplication and Division:** I should be able to
-        implement this really quickly. If I haven't in a week or so, feel free
-        to tell me.
-    -   **Formal Derivatives:** Should be easy to implement.
+    -   **Polynomial Division:** I should be able to implement this really
+        quickly. If I haven't in a week or so, feel free to tell me.
     -   **Special Polynomials:** If it's a named class of polynomials, I don't
         have it.
 

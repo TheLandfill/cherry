@@ -36,6 +36,9 @@ public:
 };
 
 int main() {
+	std::cout << "--------------------------------------------------------------------------------\n";
+	std::cout << __FILE__ << "\n";
+	std::cout << "--------------------------------------------------------------------------------\n";
 	Polynomial<GF1<5>> irreducible_poly{{1, 4, 3, 1}};
 	Cyclic_Multiplication_Group_Test<5, GF_Mat<5>> cmgt;
 	run_function_on_all_single_cases<5, GF_Mat<5>>(

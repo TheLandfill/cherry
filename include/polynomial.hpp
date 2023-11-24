@@ -100,6 +100,45 @@ public:
 		}
 		return out;
 	}
+
+	void to_derivative() {
+		if (degree() == 0) {
+			coeffs.clear();
+		}
+		for (size_t i = 1; i < coeffs.size(); i++) {
+			coeffs[i - 1] = static_cast<R>(i) * coeffs[i];
+		}
+		coeffs.pop_back();
+	}
+
+	void to_derivative(size_t n) {
+		if (n > degree()) {
+			coeffs.clear();
+		}
+		for (size_t i = n; i < coeffs.size(); i++) {
+			size_t multiple = 1;
+			for (size_t j = i; j > i - n; j--) {
+				multiple *= j;
+			}
+			coeffs[i - n] = static_cast<R>(multiple) * coeffs[i];
+		}
+		coeffs.resize(coeffs.size() - n);
+	}
+
+	Polynomial<R> differentiate() const {
+		Polynomial<R> out;
+		out.coeffs.reserve(coeffs.size());
+		for (size_t i = 1; i < coeffs.size(); i++) {
+			out.push_back(static_cast<R>(i) * coeffs[i]);
+		}
+		return out;
+	}
+
+	Polynomial<R> differentiate(size_t n) const {
+		Polynomial<R> out{ *this };
+		out.to_derivative(n);
+		return out;
+	}
 public:
 	const static R* literally_just_to_store_type_data() {
 		static R val;

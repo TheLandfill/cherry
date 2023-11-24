@@ -85,6 +85,9 @@ private:
 };
 
 int main() {
+	std::cout << "--------------------------------------------------------------------------------\n";
+	std::cout << __FILE__ << "\n";
+	std::cout << "--------------------------------------------------------------------------------\n";
 	Polynomial<GF1<5>> irreducible_poly{{1, 4, 2, 3, 3, 4, 1}};
 	Polynomial<GF1<5>> poly{{3, 2, 4, 1}};
 	Polynomial_Test<5, GF_Mat<5>> pt(irreducible_poly);

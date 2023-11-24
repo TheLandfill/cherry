@@ -5,6 +5,9 @@
 using namespace cherry;
 
 int main() {
+	std::cout << "--------------------------------------------------------------------------------\n";
+	std::cout << __FILE__ << "\n";
+	std::cout << "--------------------------------------------------------------------------------\n";
 	Polynomial<GF1<5>> irreducible_poly{{1, 4, 3, 1}};
 	GF<5> a{irreducible_poly, {{2, 3, 1}}};
 	auto b = a.inv();
