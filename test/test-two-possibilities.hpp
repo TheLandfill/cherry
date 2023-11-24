@@ -1,5 +1,5 @@
 #pragma once
-#include "finite-field.hpp"
+#include "../include/finite-field.hpp"
 #include "set-coeffs.hpp"
 #include <iostream>
 #include <iomanip>
@@ -9,10 +9,11 @@
 // would take quite a while, so I'd probably divide all these degrees by two.
 template<unsigned int p, typename Repr, typename Func>
 void run_function_on_all_double_cases(
-	const Polynomial<GF1<p>>& irreducible_poly,
+	const cherry::Polynomial<cherry::GF1<p>>& irreducible_poly,
 	const char * test_name,
 	Func f
 ) {
+	using namespace cherry;
 	using GFs = GF<p, Repr>;
 	std::vector<GF1<p>> x_coeffs;
 	x_coeffs.reserve(irreducible_poly.degree());

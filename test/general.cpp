@@ -4,6 +4,8 @@
 #include <iostream>
 #include <bit>
 
+using namespace cherry;
+
 int main() {
 	GF1<5> a = 3;
 	GF1<5> b = 4;

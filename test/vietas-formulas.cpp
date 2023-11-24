@@ -1,5 +1,7 @@
 #include "set-coeffs.hpp"
 
+using namespace cherry;
+
 template<unsigned int p, typename Repr>
 class Polynomial_Test {
 public:

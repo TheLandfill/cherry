@@ -1,5 +1,7 @@
 #include "test-one-possibility.hpp"
-#include "gf-matrix.hpp"
+#include "../include/gf-matrix.hpp"
+
+using namespace cherry;
 
 template<unsigned int p, typename Repr>
 class Cyclic_Multiplication_Group_Test {

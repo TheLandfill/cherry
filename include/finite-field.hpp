@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <type_traits>
 
+namespace cherry {
+
 // Defined so that the product of any two numbers in the finite field is zero.
 #define MAX_TYPE(p) typename std::conditional< \
 		p <= 16, \
@@ -292,4 +294,4 @@ constexpr T one(const T * literally_just_type_info = nullptr, const void * other
 	return one(T::literally_just_to_store_type_data(), other_data);
 }
 
-
+}

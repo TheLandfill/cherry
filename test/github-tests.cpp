@@ -1,6 +1,8 @@
 #include "../include/gf.hpp"
 #include <iostream>
 
+using namespace cherry;
+
 void gf1_test() {
 	GF1<5> a = 3;
 	GF1<5> b = 4;

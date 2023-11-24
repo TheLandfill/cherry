@@ -1,5 +1,7 @@
 #include "test-one-possibility.hpp"
-#include "gf-matrix.hpp"
+#include "../include/gf-matrix.hpp"
+
+using namespace cherry;
 
 template<unsigned int p, typename Repr>
 class Fermats_Little_Theorem_Single_Test {
@@ -10,7 +12,12 @@ public:
 			return true;
 		}
 		GFs to_negative_1 = x^-1;
+		// std::cout << "\n";
+		// std::cout << to_negative_1.get_val().get_val();
+		// std::cout << (x * to_negative_1).get_val().get_val();
 		GFs inverse = x.inv();
+		// std::cout << inverse.get_val().get_val();
+		// std::cout << (x * inverse).get_val().get_val();
 		uint64_t power = 1;
 		uint64_t val_pow = p;
 		uint64_t degree = x.get_order();
@@ -22,24 +29,24 @@ public:
 			degree >>= 1;
 		}
 		power -= 2;
-		GFs to_p_to_n_minus_one = x.pow_u(power);
-		fail += 8;
+		GFs to_p_to_n_minus_two = x.pow_u(power);
+		// std::cout << to_p_to_n_minus_two.get_val().get_val();
+		// std::cout << (to_p_to_n_minus_two * x).get_val().get_val();
+		// std::cout << "----------------------------------------\n";
 		if (
-			!(to_p_to_n_minus_one == to_negative_1) ||
-			!(to_p_to_n_minus_one == inverse) || (fail == 0)
+			!(to_p_to_n_minus_two == to_negative_1) ||
+			!(to_p_to_n_minus_two == inverse)
 		) {
 			std::cerr << "          x: " << x << "\n";
 			std::cerr << "       x^-1: " << to_negative_1 << "\n";
 			std::cerr << "    x.inv(): " << inverse << "\n";
-			std::cerr << "x^(p^n - 1): " << to_p_to_n_minus_one << "\n";
+			std::cerr << "x^(p^n - 2): " << to_p_to_n_minus_two << "\n";
 			std::cerr << "------------------------\n";
 			return false;
 		} else {
 			return true;
 		}
 	}
-private:
-	uint8_t fail = 0;
 };
 
 int main() {

@@ -1,5 +1,7 @@
 #include "test-one-possibility.hpp"
-#include "gf-matrix.hpp"
+#include "../include/gf-matrix.hpp"
+
+using namespace cherry;
 
 template<unsigned int p, typename Repr>
 class Field_Of_Characteristic_P_Test {
@@ -11,7 +13,7 @@ public:
 		for (unsigned int i = 1; i < p; i++) {
 			y += x;
 		}
-		fail += 8;
+		// fail += 8;
 		if (!(y == gf0) || fail == 0) {
 			std::cerr << " x: " << x << "\n";
 			std::cerr << p << "x: " << y << "\n";
@@ -22,7 +24,7 @@ public:
 		}
 	}
 private:
-	uint8_t fail;
+	uint8_t fail = 8;
 };
 
 int main() {

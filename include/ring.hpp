@@ -1,6 +1,8 @@
 #pragma once
 #include "abelian-group.hpp"
 
+namespace cherry {
+
 template<typename T>
 class Ring : public Abelian_Group<T> {
 public:
@@ -15,4 +17,6 @@ constexpr T one(const T * literally_just_type_info = nullptr, const void * other
 	(void)literally_just_type_info;
 	(void)other_data;
 	return 1;
+}
+
 }

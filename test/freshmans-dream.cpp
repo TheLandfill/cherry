@@ -1,6 +1,8 @@
-#include "finite-field.hpp"
-#include "gf-matrix.hpp"
+#include "../include/finite-field.hpp"
+#include "../include/gf-matrix.hpp"
 #include "test-two-possibilities.hpp"
+
+using namespace cherry;
 
 template<unsigned int p, typename Repr>
 class Freshmans_Dream_Single_Test {
@@ -9,7 +11,7 @@ public:
 	bool operator()(const GFs& x, const GFs& y) {
 		GFs power_of_sum = (x + y)^p;
 		GFs sum_of_power = (x^p) + (y^p);
-		fail++;
+		//fail++;
 		if (!(power_of_sum == sum_of_power) || fail == 0) {
 			std::cerr << "        x: " << x << "\n";
 			std::cerr << "        y: " << y << "\n";
@@ -23,7 +25,7 @@ public:
 		}
 	}
 private:
-	uint8_t fail = 0;
+	uint8_t fail = 1;
 };
 
 int main() {

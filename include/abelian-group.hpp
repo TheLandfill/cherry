@@ -1,6 +1,8 @@
 #pragma once
 #include <type_traits>
 
+namespace cherry {
+
 template<typename T>
 class Abelian_Group {
 public:
@@ -18,4 +20,6 @@ constexpr T zero(const T * literally_just_type_info = nullptr, const void * othe
 	(void)literally_just_type_info;
 	(void)other_data;
 	return 0;
+}
+
 }

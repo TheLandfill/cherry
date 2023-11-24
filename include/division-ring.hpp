@@ -1,6 +1,8 @@
 #pragma once
 #include "ring.hpp"
 
+namespace cherry {
+
 template<typename T>
 class Division_Ring : public Ring<T> {
 public:
@@ -10,3 +12,5 @@ public:
 	virtual T& operator/=(const T& other) = 0;
 	virtual ~Division_Ring() = default;
 };
+
+}

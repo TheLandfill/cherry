@@ -6,6 +6,8 @@
 #include <format>
 #include <iostream>
 
+namespace cherry {
+
 class Matrix_Base {};
 
 // Note that I'm classifying a matrix as a division ring even though not every
@@ -152,6 +154,9 @@ public:
 		T one_v = one<T>();
 		Matrix<T> inverse{zero_v, num_rows};
 		inverse.to_identity();
+		#ifdef SHOW_MATRIX_STEPS
+		std::cout << dummy << inverse;
+		#endif
 		for (size_t col = 0; col < num_cols; col++) {
 			size_t actual_row = col;
 			size_t cur_row = actual_row + 1;
@@ -166,21 +171,37 @@ public:
 				dummy.ero_swap(cur_row, actual_row);
 				inverse.ero_swap(cur_row, actual_row);
 				cur_val = dummy(actual_row, col);
+				#ifdef SHOW_MATRIX_STEPS
+				std::cout << "Swapping Rows " << cur_row << " and " << actual_row << "\n";
+				std::cout << dummy << inverse;
+				#endif
 			}
 			if (cur_val != one_v) {
 				T inverse_scale = dummy(actual_row, col).inv();
 				dummy.ero_scale(actual_row, inverse_scale, col);
-				inverse.ero_scale(actual_row, inverse_scale, col);
+				inverse.ero_scale(actual_row, inverse_scale);
+				#ifdef SHOW_MATRIX_STEPS
+				std::cout << "Scale row " << actual_row << " by " << inverse_scale << "\n";
+				std::cout << dummy << inverse;
+				#endif
 			}
 			for (size_t row = 0; row < col; row++) {
 				T dummy_val = dummy(row, col);
 				dummy.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val, col);
-				inverse.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val, col);
+				inverse.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val);
+				#ifdef SHOW_MATRIX_STEPS
+				std::cout << "Subtract row " << dummy_val << " * R" << actual_row << " from R" << row << "\n";
+				std::cout << dummy << inverse;
+				#endif
 			}
 			for (size_t row = col + 1; row < num_rows; row++) {
 				T dummy_val = dummy(row, col);
 				dummy.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val, col);
-				inverse.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val, col);
+				inverse.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val);
+				#ifdef SHOW_MATRIX_STEPS
+				std::cout << "Subtract row " << dummy_val << " * R" << actual_row << " from R" << row << "\n";
+				std::cout << dummy << inverse;
+				#endif
 			}
 		}
 		return inverse;
@@ -390,4 +411,6 @@ std::ostream& operator<<(std::ostream& s, const Matrix<T>& matrix) {
 	}
 	s << "\n";
 	return s;
+}
+
 }

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+namespace cherry {
+
 class Polynomial_Base {};
 
 template<typename R>
@@ -97,4 +99,6 @@ std::ostream& operator<<(std::ostream& s, const Polynomial<T>& polynomial) {
 	}
 	s << polynomial[0] << ")";
 	return s;
+}
+
 }

@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <stdexcept>
 
+namespace cherry {
+
 class GF_Mat_Base {};
 
 template<unsigned int p>
@@ -192,3 +194,4 @@ std::ostream& operator<<(std::ostream& s, const GF_Mat<p>& value) {
 	return s;
 }
 
+}
