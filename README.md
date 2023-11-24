@@ -117,6 +117,8 @@ int main() {
         the elementary row operations.
     -   **Simple Matrices:** I've implemented certain base matrices, including
         the zero matrix, the identity matrix, the circulant matrix basis, etc.
+    -   **General RREF:** Sure hope your matrix isn't singular. If it is,
+        you're out of luck because I'm not checking for singular matrices.
 -   **Polynomials**
     -   **Addition and Subtraction:** Wasn't too difficult to implement.
     -   **Accessing the Coefficients:** Same as with a vector.
@@ -150,8 +152,6 @@ Here's a list of all the features the code does not support:
         implemented this, but it should be easy enough to extend.
     -   **Generating Roots of Unity:** It's missing in general from every field.
 -   **Matrices**
-    -   **General RREF:** I only implemented this when finding the inverse, but
-        I can probably implement something else later.
     -   **Dealing with Poorly Behaved Floating Point Matrices:** Currently, I'm
         checking if certain elements are zero because I've been working with
         finite fields. For floats, I should instead use a better algorithm.
@@ -169,6 +169,7 @@ Here's a list of all the features the code does not support:
     -   **Polynomial Multiplication and Division:** I should be able to
         implement this really quickly. If I haven't in a week or so, feel free
         to tell me.
+    -   **Formal Derivatives:** Should be easy to implement.
     -   **Special Polynomials:** If it's a named class of polynomials, I don't
         have it.
 

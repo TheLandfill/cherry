@@ -12,11 +12,4 @@ public:
 	virtual ~Ring() = default;
 };
 
-template<typename T, std::enable_if<std::is_fundamental<T>::value>::type* = nullptr>
-constexpr T one(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	(void)other_data;
-	return 1;
-}
-
 }

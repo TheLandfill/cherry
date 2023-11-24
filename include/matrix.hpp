@@ -1,5 +1,6 @@
 #pragma once
 #include "division-ring.hpp"
+#include "identities.hpp"
 #include <cstdlib>
 #include <stdexcept>
 #include <vector>

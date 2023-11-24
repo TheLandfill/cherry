@@ -1,6 +1,7 @@
 #pragma once
 #include "polynomial.hpp"
 #include "division-ring.hpp"
+#include "identities.hpp"
 #include <cstdint>
 #include <stdexcept>
 #include <type_traits>
@@ -17,8 +18,6 @@ namespace cherry {
 			std::uint32_t \
 		>::type \
 	>::type
-
-class GF1_Base {};
 
 template<unsigned int p>
 class GF1 : public Division_Ring<GF1<p>>, public GF1_Base {
@@ -125,22 +124,6 @@ std::ostream& operator<<(std::ostream& s, const GF1<p>& value) {
 	s << value.get_val();
 	return s;
 }
-
-template<typename T, std::enable_if_t<std::is_base_of_v<GF1_Base, T>, bool> = true>
-constexpr T zero(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	(void)other_data;
-	return 0;
-}
-
-template<typename T, std::enable_if_t<std::is_base_of_v<GF1_Base, T>, bool> = true>
-constexpr T one(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	(void)other_data;
-	return 1;
-}
-
-class GF_Base {};
 
 class GF_Mat_Base;
 template<unsigned int p>
@@ -280,18 +263,6 @@ template<unsigned int p, typename Repr>
 std::ostream& operator<<(std::ostream& s, const GF<p, Repr>& value) {
 	s << value.get_val();
 	return s;
-}
-
-template<typename T, std::enable_if_t<std::is_base_of_v<GF_Base, T>, bool> = true>
-constexpr T zero(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	return zero(T::literally_just_to_store_type_data(), other_data);
-}
-
-template<typename T, std::enable_if_t<std::is_base_of_v<GF_Base, T>, bool> = true>
-constexpr T one(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	return one(T::literally_just_to_store_type_data(), other_data);
 }
 
 }
