@@ -34,6 +34,9 @@ use GF1\<p\> below.
 #include <iostream>
 
 int main() {
+    // You all know that you can do this right? So you don't have to complain
+    // about typing out a few extra characters? Good.
+    using namespace cherry;
     GF1<5> a = 3;
     GF1<5> b = 4;
 
@@ -66,6 +69,7 @@ CANNOT HAVE ELEMENTS WITH DIFFERENT IRREDUCIBLE POLYNOMIALS INTERACT***.
 #include <iostream>
 
 int main() {
+    using namespace cherry;
     Polynomial<GF1<5>> irreducible_poly{{1, 4, 3, 1}};
 
     Polynomial<GF1<5>> poly1{{2, 4, 1}};
