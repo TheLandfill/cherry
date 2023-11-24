@@ -25,21 +25,11 @@ public:
 
 	Polynomial<R> operator+(const Polynomial<R>& other) const {
 		size_t len = std::max(coeffs.size(), other.coeffs.size());
-		size_t min_len = std::min(coeffs.size(), other.coeffs.size());
 		std::vector<R> new_coeffs;
 		new_coeffs.reserve(len);
-		for (size_t i = 0; i < min_len; i++) {
-			new_coeffs.push_back(coeffs[i] + other.coeffs[i]);
+		for (size_t i = 0; i < len; i++) {
+			new_coeffs.push_back((*this)[i] + other[i]);
 		}
-		const std::vector<R> * coeffs_to_add = &coeffs;
-		if (coeffs.size() < other.coeffs.size()) {
-			coeffs_to_add = &other.coeffs;
-		}
-		new_coeffs.insert(
-			new_coeffs.end(),
-			coeffs_to_add->begin() + min_len,
-			coeffs_to_add->end()
-		);
 		while (!new_coeffs.empty() && new_coeffs.back() == zero<R>()) {
 			new_coeffs.pop_back();
 		}
@@ -47,7 +37,16 @@ public:
 	}
 
 	Polynomial<R> operator-(const Polynomial<R>& other) const {
-		return *this + (-other);
+		size_t len = std::max(coeffs.size(), other.coeffs.size());
+		std::vector<R> new_coeffs;
+		new_coeffs.reserve(len);
+		for (size_t i = 0; i < len; i++) {
+			new_coeffs.push_back((*this)[i] - other[i]);
+		}
+		while (!new_coeffs.empty() && new_coeffs.back() == zero<R>()) {
+			new_coeffs.pop_back();
+		}
+		return Polynomial<R>{new_coeffs};
 	}
 
 	Polynomial<R> operator*(const Polynomial<R>& other) const {
@@ -90,6 +89,7 @@ public:
 		}
 	}
 
+	// Horner's Rule
 	template<typename T>
 	T eval(const T& val, void * other_data = nullptr) const {
 		T out = zero(&out, other_data);
