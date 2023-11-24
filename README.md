@@ -11,6 +11,7 @@ It's a header-only library, so the steps are trivial.
 
 1.  Download the repository or just the [include directory](include/).
 1.  Include what you need or just `#include "gf.hpp"`.
+1.  **Compile with support for C++20.**
 
 ## Use
 
@@ -36,6 +37,7 @@ int main() {
     GF1<5> a = 3;
     GF1<5> b = 4;
 
+    auto c = a + b;
     auto d = a - b;
     auto e = c * d;
     auto f = a * a - (b^2);
@@ -61,6 +63,7 @@ CANNOT HAVE ELEMENTS WITH DIFFERENT IRREDUCIBLE POLYNOMIALS INTERACT***.
 
 ```cpp
 #include "gf.hpp"
+#include <iostream>
 
 int main() {
     Polynomial<GF1<5>> irreducible_poly{{1, 4, 3, 1}};
@@ -71,6 +74,7 @@ int main() {
     GF<5> a{irreducible_poly, poly1};
     GF<5> b{irreducible_poly, poly2};
 
+    auto c = a + b;
     auto d = a - b;
     auto e = c * d;
     auto f = a * a - (b^2);
