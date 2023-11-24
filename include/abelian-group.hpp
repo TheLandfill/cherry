@@ -15,7 +15,7 @@ public:
 	virtual ~Abelian_Group() = default;
 };
 
-template<typename T, std::enable_if<std::is_fundamental<T>::value>::type>
+template<typename T, std::enable_if<std::is_fundamental<T>::value>::type* = nullptr>
 constexpr T zero(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
 	(void)literally_just_type_info;
 	(void)other_data;

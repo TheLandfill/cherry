@@ -177,7 +177,8 @@ public:
 				#endif
 			}
 			if (cur_val != one_v) {
-				T inverse_scale = dummy(actual_row, col).inv();
+				const T& scale = dummy(actual_row, col);
+				T inverse_scale = cherry::inv(scale);
 				dummy.ero_scale(actual_row, inverse_scale, col);
 				inverse.ero_scale(actual_row, inverse_scale);
 				#ifdef SHOW_MATRIX_STEPS
@@ -205,6 +206,71 @@ public:
 			}
 		}
 		return inverse;
+	}
+
+	Matrix<T> rref() const {
+		Matrix<T> dummy{*this};
+		T zero_v = zero<T>();
+		T one_v = one<T>();
+		#ifdef SHOW_MATRIX_STEPS
+		std::cout << "Matrix is " << num_rows << "x" << num_cols << "\n";
+		std::cout << dummy;
+		#endif
+		for (size_t col = 0; col < std::min(num_cols, num_rows); col++) {
+			#ifdef SHOW_MATRIX_STEPS
+			std::cout << "On column " << col << "\n";
+			#endif
+			size_t actual_row = col;
+			size_t cur_row = actual_row + 1;
+			T& cur_val = dummy(actual_row, col);
+			#ifdef SHOW_MATRIX_STEPS
+			std::cout << "M[" << actual_row << "][" << col << "] = " << cur_val << "\n";
+			#endif
+			if (cur_val == zero_v) {
+				if (cur_row >= num_rows) {
+					continue;
+				}
+				while (cur_row < num_rows && dummy(cur_row, col) == zero_v) {
+					cur_row++;
+				}
+				if (dummy(cur_row, col) == zero_v) {
+					std::cout << "Matrix is incomplete\n";
+					return dummy;
+				}
+				dummy.ero_swap(cur_row, actual_row);
+				cur_val = dummy(actual_row, col);
+				#ifdef SHOW_MATRIX_STEPS
+				std::cout << "Swapping Rows " << cur_row << " and " << actual_row << "\n";
+				std::cout << dummy;
+				#endif
+			}
+			if (cur_val != one_v) {
+				const T& scale = dummy(actual_row, col);
+				T inverse_scale = cherry::inv(scale);
+				dummy.ero_scale(actual_row, inverse_scale, col);
+				#ifdef SHOW_MATRIX_STEPS
+				std::cout << "Scale row " << actual_row << " by " << inverse_scale << "\n";
+				std::cout << dummy;
+				#endif
+			}
+			for (size_t row = 0; row < col; row++) {
+				T dummy_val = dummy(row, col);
+				dummy.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val, col);
+				#ifdef SHOW_MATRIX_STEPS
+				std::cout << "Subtract row " << dummy_val << " * R" << actual_row << " from R" << row << "\n";
+				std::cout << dummy;
+				#endif
+			}
+			for (size_t row = col + 1; row < num_rows; row++) {
+				T dummy_val = dummy(row, col);
+				dummy.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val, col);
+				#ifdef SHOW_MATRIX_STEPS
+				std::cout << "Subtract row " << dummy_val << " * R" << actual_row << " from R" << row << "\n";
+				std::cout << dummy;
+				#endif
+			}
+		}
+		return dummy;
 	}
 
 	void to_zero() {
