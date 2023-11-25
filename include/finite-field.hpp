@@ -239,13 +239,18 @@ public:
 		return val == other.val;
 	}
 
-	const static Repr* literally_just_to_store_type_data() {
-		static Repr r;
-		return &r;
-	}
-
 	unsigned int get_order() const {
 		return order;
+	}
+public:
+	const static GFs gfs_zero(const void * other_data) {
+		const Polynomial<GF1<p>>& irreducible_poly = *static_cast<const Polynomial<GF1<p>>*>(other_data);
+		return GFs{irreducible_poly};
+	}
+
+	const static GFs gfs_one(const void * other_data) {
+		const Polynomial<GF1<p>>& irreducible_poly = *static_cast<const Polynomial<GF1<p>>*>(other_data);
+		return GFs{irreducible_poly, one<Polynomial<GF1<p>>>()};
 	}
 private:
 	unsigned int order;

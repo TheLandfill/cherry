@@ -28,18 +28,20 @@ void gf1_test() {
 void gf_general_test() {
 	Polynomial<GF1<5>> irreducible_poly{{1, 4, 3, 1}};
 
-	Polynomial<GF1<5>> poly1{{2, 4, 1}};
-	Polynomial<GF1<5>> poly2{{3, 1, 2}};
+	Polynomial<GF1<5>> poly1{{3, 2, 1}};
+	Polynomial<GF1<5>> poly2{{3, 1, 4}};
 
 	GF<5> a{irreducible_poly, poly1};
 	GF<5> b{irreducible_poly, poly2};
 
 	auto c = a + b;
 	auto d = a - b;
-	auto e = c * d;
-	auto f = a * a - (b^2);
-	auto should_be_zero = e - f;
-	auto g = c / d;
+	auto e = a * b;
+	auto f = a / b;
+	auto g = c * d;
+	auto h = a * a - (b^2);
+	auto should_be_zero = g - h;
+	auto i = c / d;
 
 
 	std::cout << "a = " << a << "\n";
@@ -49,6 +51,8 @@ void gf_general_test() {
 	std::cout << "e = " << e << "\n";
 	std::cout << "f = " << f << "\n";
 	std::cout << "g = " << g << "\n";
+	std::cout << "h = " << h << "\n";
+	std::cout << "i = " << i << "\n";
 	std::cout << "0 = " << should_be_zero << "\n";
 }
 

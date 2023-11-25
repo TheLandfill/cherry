@@ -10,7 +10,7 @@ public:
 		const Polynomial<GF1<p>>& poly
 	) :
 		irreducible_poly(poly),
-		zero_element(zero<GFs>(&zero_element, &irreducible_poly))
+		zero_element(zero<GFs>(&irreducible_poly))
 	{}
 
 	void find_roots(const Polynomial<GF1<p>>& poly) {

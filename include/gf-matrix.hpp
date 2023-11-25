@@ -129,12 +129,6 @@ public:
 		}
 	}
 
-	static GF_Mat zero(const Polynomial<GF1<p>>& poly) {
-		return {
-			poly
-		};
-	}
-
 	const Matrix<GF1<p>>& get_val() const {
 		return val;
 	}
@@ -152,19 +146,30 @@ public:
 	}
 
 	Polynomial<GF1<p>> to_poly() const {
+		return matrix_to_poly(val);
+	}
+
+	Polynomial<GF1<p>> get_lambda_poly() const {
+		return matrix_to_poly(lambda);
+	}
+public:
+	static GF_Mat<p> zero(const void * other_data) {
+		return { *static_cast<Polynomial<GF1<p>>*>(other_data) };
+	}
+
+	static GF_Mat<p> one(const void * other_data) {
+		return { *static_cast<Polynomial<GF1<p>>*>(other_data), { 1 } };
+	}
+
+	static Polynomial<GF1<p>> matrix_to_poly(const Matrix<GF1<p>>& mat) {
 		std::vector<GF1<p>> coeffs;
-		coeffs.reserve(val.get_num_rows());
-		size_t col = val.get_num_cols() - 1;
-		for (size_t row = 0; row < val.get_num_rows(); row++) {
-			coeffs.push_back(val(row, col));
+		coeffs.reserve(mat.get_num_rows());
+		size_t col = mat.get_num_cols() - 1;
+		for (size_t row = 0; row < mat.get_num_rows(); row++) {
+			coeffs.push_back(mat(row, col));
 		}
 		std::reverse(coeffs.begin(), coeffs.end());
 		return coeffs;
-	}
-
-	const static Polynomial<GF1<p>>* literally_just_to_store_type_data() {
-		static Polynomial<GF1<p>> poly;
-		return &poly;
 	}
 private:
 	Matrix<GF1<p>> val;
@@ -172,20 +177,13 @@ private:
 };
 
 template<typename T, std::enable_if_t<std::is_base_of_v<GF_Mat_Base, T>, bool> = true>
-constexpr T zero(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	decltype(T::literally_just_to_store_type_data()) irreducible = static_cast<decltype(T::literally_just_to_store_type_data())>(other_data);
-	T out{*irreducible};
-	return out;
+constexpr T zero(const void * other_data = nullptr) {
+	return T::zero(other_data);
 }
 
 template<typename T, std::enable_if_t<std::is_base_of_v<GF_Mat_Base, T>, bool> = true>
-constexpr T one(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	decltype(T::literally_just_to_store_type_data()) irreducible = static_cast<decltype(T::literally_just_to_store_type_data())>(other_data);
-	T out{*irreducible};
-	out.to_identity();
-	return out;
+constexpr T one(const void * other_data = nullptr) {
+	return T::one(other_data);
 }
 
 template<unsigned int p>

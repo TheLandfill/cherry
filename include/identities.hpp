@@ -4,15 +4,13 @@
 namespace cherry {
 
 template<typename T, std::enable_if<std::is_fundamental<T>::value>::type* = nullptr>
-constexpr T zero(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
+constexpr T zero(const void * other_data = nullptr) {
 	(void)other_data;
 	return 0;
 }
 
 template<typename T, std::enable_if<std::is_fundamental<T>::value>::type* = nullptr>
-constexpr T one(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
+constexpr T one(const void * other_data = nullptr) {
 	(void)other_data;
 	return 1;
 }
@@ -31,15 +29,13 @@ T inv(const T& a) {
 class GF1_Base {};
 
 template<typename T, std::enable_if_t<std::is_base_of_v<GF1_Base, T>, bool> = true>
-constexpr T zero(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
+constexpr T zero(const void * other_data = nullptr) {
 	(void)other_data;
 	return 0;
 }
 
 template<typename T, std::enable_if_t<std::is_base_of_v<GF1_Base, T>, bool> = true>
-constexpr T one(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
+constexpr T one(const void * other_data = nullptr) {
 	(void)other_data;
 	return 1;
 }
@@ -47,15 +43,13 @@ constexpr T one(const T * literally_just_type_info = nullptr, const void * other
 class GF_Base {};
 
 template<typename T, std::enable_if_t<std::is_base_of_v<GF_Base, T>, bool> = true>
-constexpr T zero(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	return zero(T::literally_just_to_store_type_data(), other_data);
+constexpr T zero(const void * other_data) {
+	return T::gfs_zero(other_data);
 }
 
 template<typename T, std::enable_if_t<std::is_base_of_v<GF_Base, T>, bool> = true>
-constexpr T one(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	return one(T::literally_just_to_store_type_data(), other_data);
+constexpr T one(const void * other_data) {
+	return T::gfs_one(other_data);
 }
 
 }

@@ -12,6 +12,7 @@ class Polynomial_Base {};
 template<typename R>
 class Polynomial : public Polynomial_Base {
 public:
+	Polynomial() {}
 	Polynomial(const std::vector<R>& c) : coeffs(c) {}
 
 	Polynomial<R> operator-() const {
@@ -24,26 +25,28 @@ public:
 	}
 
 	Polynomial<R> operator+(const Polynomial<R>& other) const {
+		R z = zero<R>();
 		size_t len = std::max(coeffs.size(), other.coeffs.size());
 		std::vector<R> new_coeffs;
 		new_coeffs.reserve(len);
 		for (size_t i = 0; i < len; i++) {
 			new_coeffs.push_back((*this)[i] + other[i]);
 		}
-		while (!new_coeffs.empty() && new_coeffs.back() == zero<R>()) {
+		while (!new_coeffs.empty() && new_coeffs.back() == z) {
 			new_coeffs.pop_back();
 		}
 		return Polynomial<R>{new_coeffs};
 	}
 
 	Polynomial<R> operator-(const Polynomial<R>& other) const {
+		static const R z = zero<R>();
 		size_t len = std::max(coeffs.size(), other.coeffs.size());
 		std::vector<R> new_coeffs;
 		new_coeffs.reserve(len);
 		for (size_t i = 0; i < len; i++) {
 			new_coeffs.push_back((*this)[i] - other[i]);
 		}
-		while (!new_coeffs.empty() && new_coeffs.back() == zero<R>()) {
+		while (!new_coeffs.empty() && new_coeffs.back() == z) {
 			new_coeffs.pop_back();
 		}
 		return Polynomial<R>{new_coeffs};
@@ -92,8 +95,8 @@ public:
 	// Horner's Rule
 	template<typename T>
 	T eval(const T& val, void * other_data = nullptr) const {
-		T out = zero(&out, other_data);
-		T identity = one(&out, other_data);
+		T out = cherry::zero<T>(other_data);
+		T identity = cherry::one<T>(other_data);
 		for (size_t i = degree(); i <= degree(); i--) {
 			out *= val;
 			out += coeffs[i] * identity;
@@ -140,24 +143,26 @@ public:
 		return out;
 	}
 public:
-	const static R* literally_just_to_store_type_data() {
-		static R val;
-		return &val;
+	const static Polynomial<R> poly_zero(const void * other_data = nullptr) {
+		(void)other_data;
+		return { zero<R>(other_data) };
+	}
+
+	const static Polynomial<R> poly_one(const void * other_data = nullptr) {
+		return {{ one<R>(other_data) }};
 	}
 private:
 	std::vector<R> coeffs;
 };
 
 template<typename T, std::enable_if_t<std::is_base_of_v<Polynomial_Base, T>, bool> = true>
-constexpr T zero(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	return {{ zero(T::literally_just_to_store_type_data(), other_data) }};
+constexpr T zero(const void * other_data = nullptr) {
+	return T::poly_zero(other_data);
 }
 
 template<typename T, std::enable_if_t<std::is_base_of_v<Polynomial_Base, T>, bool> = true>
-constexpr T one(const T * literally_just_type_info = nullptr, const void * other_data = nullptr) {
-	(void)literally_just_type_info;
-	return {{ one(T::literally_just_to_store_type_data(), other_data) }};
+constexpr T one(const void * other_data = nullptr) {
+	return T::poly_one(other_data);
 }
 
 template<typename T>
