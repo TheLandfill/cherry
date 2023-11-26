@@ -70,6 +70,11 @@ CANNOT HAVE ELEMENTS WITH DIFFERENT IRREDUCIBLE POLYNOMIALS INTERACT***.
 
 int main() {
     using namespace cherry;
+    // NOTE: THE COEFFICIENTS OF THE IRREDUCIBLE POLYNOMIAL GO FROM
+    //       LOWEST DEGREE TO HIGHEST DEGREE. THE POLYNOMIAL BELOW IS
+    //       1 + 4 λ + 3 λ² + λ³
+    //       BY DOING IT THIS WAY, irreducible_poly[2] GETS YOU THE COEFFICIENT
+    //       OF λ².
     Polynomial<GF1<5>> irreducible_poly{{1, 4, 3, 1}};
 
     Polynomial<GF1<5>> poly1{{2, 4, 1}};
@@ -97,6 +102,26 @@ int main() {
     return 0;
 }
 ```
+You can also do stuff with matrices of these types, with the only caveat being
+that you'll have to pass a `shared_ptr<T>` to the matrix if it needs extra info
+to determine the proper multiplicative or additive identities, which only
+happens if you're making a matrix with a type of `GF<p>` since you need to pass
+the characteristic polynomial in.
+```cpp
+#include <iostream>
+
+int main() {
+    std::vector<GF1<5>> coeffs{1, 4, 3, 1};
+    auto irreducible_poly = std::make_shared<Polynomial<GF1<5>>>(coeffs);
+    GF<5> a{*irreducible_poly.get(), {{3, 2, 1}}};
+
+    Matrix<GF<5>> mat_a{a, 3, irreducible_poly};
+    std::cout << mat_a;
+    return 0;
+}
+```
+If you want to see more examples, you should check out the [tests](test/)
+directory.
 
 ## Supported Features
 
@@ -140,6 +165,12 @@ int main() {
 Here's a list of all the features the code does not support:
 
 -   **Finite Fields**
+    -   **Detecting Out Non-Fields:** You can do `GF1<6>` and no one will stop
+        you. I could implement a compile-time algorithm for checking primes,
+        but that would make the build times take way too long. Instead, your
+        program is just going to crash during runtime. This shouldn't be a
+        problem because you should be checking whether an integer is prime
+        before putting it into the code.
     -   **Factoring:** Currently, I'm factoring polynomials by guessing every
         possible root in the finite field large enough to hold all possible
         solutions. It's also not an explicit function in the code anywhere
@@ -167,7 +198,7 @@ Here's a list of all the features the code does not support:
     -   **Determinants:** Not implemented yet as I'm looking into good
         algorithms to calculate the determinant.
     -   **Characteristic Polynomials:** Not implemented yet as I'm looking into
-        good algorithms to calcualte the characteristic polynomial.
+        good algorithms to calculate the characteristic polynomial.
     -   **Matrix Factorizations:** Probably lowest on my list, tbh. Might be
         fun, though.
 -   **Polynomials**
