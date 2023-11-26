@@ -46,6 +46,8 @@ Matrix<GF<5>> return_matrix_from_function_test() {
 	for (size_t i = 0; i < 10; i++) {
 		NAME_AND_VALUE((mat^i))
 	}
+	std::cout << "Number of objects using poly: " << irreducible_poly.use_count() << "\n";
+	std::cout << mat.to_string();
 	return mat;
 }
 
@@ -56,6 +58,7 @@ int main() {
 	auto mat = return_matrix_from_function_test();
 	std::cout << "Matrix returned from test!\n";
 	std::cout << mat;
+	std::cout << mat.use_count() << "\n";
 	std::cout << "Inverse\n";
 	std::cout << mat.inv();
 	std::cout << "Product\n";

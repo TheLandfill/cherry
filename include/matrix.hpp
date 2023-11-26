@@ -192,7 +192,7 @@ public:
 				std::cout << dummy << inverse;
 				#endif
 			}
-			for (size_t row = 0; row < col; row++) {
+			for (size_t row = col + 1; row < num_rows; row++) {
 				T dummy_val = dummy(row, col);
 				dummy.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val, col);
 				inverse.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val);
@@ -201,12 +201,13 @@ public:
 				std::cout << dummy << inverse;
 				#endif
 			}
-			for (size_t row = col + 1; row < num_rows; row++) {
+		}
+		for (size_t col = num_cols - 1; col > 0; col--) {
+			for (size_t row = 0; row < col; row++) {
 				T dummy_val = dummy(row, col);
-				dummy.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val, col);
-				inverse.ero_subtract_scaled_row_from_r1(row, actual_row, dummy_val);
+				inverse.ero_subtract_scaled_row_from_r1(row, col, dummy_val);
 				#ifdef SHOW_MATRIX_STEPS
-				std::cout << "Subtract row " << dummy_val << " * R" << actual_row << " from R" << row << "\n";
+				std::cout << "Subtract row " << dummy_val << " * R" << col << " from R" << row << "\n";
 				std::cout << dummy << inverse;
 				#endif
 			}
@@ -401,6 +402,24 @@ public:
 		size_t cols;
 		void * other_data;
 	};
+
+	std::string to_string() const {
+		std::string out;
+		out.reserve(1024);
+		for (size_t row = 0; row < get_num_rows(); row++) {
+			for (size_t col = 0; col < get_num_cols(); col++) {
+				out += static_cast<std::string>((*this)(row, col));
+				out += " ";
+			}
+			out += "\n";
+		}
+		out += "\n";
+		return out;
+	}
+
+	size_t use_count() {
+		return other_data.use_count();
+	}
 public:
 	const static Matrix<T> matrix_zero(const void *& other_data) {
 		Other_Data o_data = *static_cast<Other_Data*>(other_data);

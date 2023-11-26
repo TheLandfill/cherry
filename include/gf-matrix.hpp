@@ -12,8 +12,10 @@ template<unsigned int p>
 class GF_Mat : public Division_Ring<GF_Mat<p>>, public GF_Mat_Base {
 public:
 	GF_Mat() {}
-	GF_Mat(const Polynomial<GF1<p>>& irreducible) : val{GF1<p>{0}, irreducible.degree()}, lambda{GF1<p>{0}, irreducible.degree()} {
+	GF_Mat(const Polynomial<GF1<p>>& irr) : val{GF1<p>{0}, irr.degree()}, lambda{GF1<p>{0}, irr.degree()} {
 		lambda.to_nilpotent_diag(1);
+		auto irreducible = irr;
+		irreducible *= cherry::inv(irreducible[irreducible.degree()]);
 		for (size_t i = 0; i < irreducible.degree(); i++) {
 			lambda(irreducible.degree() - i - 1, 0) = -irreducible[i];
 		}
@@ -151,6 +153,13 @@ public:
 
 	Polynomial<GF1<p>> get_lambda_poly() const {
 		return matrix_to_poly(lambda);
+	}
+
+	std::string to_string() const {
+		std::string out;
+		out.reserve(256);
+		out += matrix_to_poly(val).to_string();
+		return out;
 	}
 public:
 	static GF_Mat<p> zero(const void * other_data) {

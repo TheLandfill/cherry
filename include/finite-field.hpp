@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <stdexcept>
 #include <type_traits>
+#include <string>
 
 namespace cherry {
 
@@ -16,14 +17,18 @@ namespace cherry {
 		typename std::conditional< \
 			p <= UINT8_MAX, \
 			std::uint16_t, \
-			std::uint32_t \
+			typename std::conditional< \
+				p <= UINT16_MAX, \
+				std::uint32_t, \
+				std::uint64_t  \
+			>::type \
 		>::type \
 	>::type
 
-template<unsigned int p>
+template<uint32_t p>
 class GF1 : public Division_Ring<GF1<p>>, public GF1_Base {
 public:
-	GF1(unsigned int v) : val(v % p) {}
+	GF1(uint32_t v) : val(v % p) {}
 	GF1() : val{0} {}
 
 	GF1<p> operator+(const GF1<p>& other) const override {
@@ -91,7 +96,7 @@ public:
 		return pow_u(pow);
 	}
 
-	GF1<p> pow_u(unsigned int pow) const override {
+	GF1<p> pow_u(uint32_t pow) const override {
 		if (val <= 1) {
 			return val;
 		}
@@ -108,7 +113,7 @@ public:
 		return out;
 	}
 
-	uint32_t get_val() const {
+	uint64_t get_val() const {
 		return val;
 	}
 
@@ -116,21 +121,28 @@ public:
 		return val == other.val;
 	}
 
+	std::string to_string() const {
+		return std::to_string(static_cast<uint64_t>(val));
+	}
+
+	explicit operator std::string() const {
+		return to_string();
+	}
 private:
 	MAX_TYPE(p) val;
 };
 
-template<unsigned int p>
+template<uint32_t p>
 std::ostream& operator<<(std::ostream& s, const GF1<p>& value) {
 	s << value.get_val();
 	return s;
 }
 
 class GF_Mat_Base;
-template<unsigned int p>
+template<uint32_t p>
 class GF_Mat;
 
-template<unsigned int p, typename Repr = GF_Mat<p>>
+template<uint32_t p, typename Repr = GF_Mat<p>>
 class GF : public Division_Ring<GF<p, Repr>>, public GF_Base {
 public:
 	GF(const Polynomial<GF1<p>>& irreducible_poly) :
@@ -220,7 +232,7 @@ public:
 		return out;
 	}
 
-	GFs pow_u(unsigned int pow) const override {
+	GFs pow_u(uint32_t pow) const override {
 		GFs out{ *this };
 		out.val = out.val.pow_u(pow);
 		return out;
@@ -240,8 +252,16 @@ public:
 		return val == other.val;
 	}
 
-	unsigned int get_order() const {
+	uint32_t get_order() const {
 		return order;
+	}
+
+	std::string to_string() const {
+		return val.to_string();
+	}
+
+	explicit operator std::string() const {
+		return to_string();
 	}
 public:
 	const static GFs gfs_zero(const void * other_data) {
@@ -254,18 +274,18 @@ public:
 		return GFs{irreducible_poly, one<Polynomial<GF1<p>>>()};
 	}
 private:
-	unsigned int order;
+	uint32_t order;
 	Repr val;
 };
 
-template<unsigned int p, typename Repr>
+template<uint32_t p, typename Repr>
 GF<p, Repr> operator*(const GF1<p>& scalar, const GF<p, Repr>& vector) {
 	GF<p, Repr> out{ vector };
 	out *= scalar;
 	return out;
 }
 
-template<unsigned int p, typename Repr>
+template<uint32_t p, typename Repr>
 std::ostream& operator<<(std::ostream& s, const GF<p, Repr>& value) {
 	s << value.get_val();
 	return s;

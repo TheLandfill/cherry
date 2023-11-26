@@ -72,6 +72,13 @@ public:
 		return new_coeffs;
 	}
 
+	Polynomial<R>& operator*=(const R& other) {
+		for (auto& coeff : coeffs) {
+			coeff *= other;
+		}
+		return *this;
+	}
+
 	R& operator[](size_t i) {
 		return coeffs.at(i);
 	}
@@ -140,6 +147,25 @@ public:
 	Polynomial<R> differentiate(size_t n) const {
 		Polynomial<R> out{ *this };
 		out.to_derivative(n);
+		return out;
+	}
+
+	explicit operator std::string() const {
+		return to_string();
+	}
+
+	std::string to_string() const {
+		std::string out;
+		out.reserve(64);
+		out += "(";
+		if (degree() != 0) {
+			for (size_t i = degree(); i > 0; i--) {
+				out += static_cast<std::string>((*this)[i]);
+				out += ", ";
+			}
+		}
+		out += static_cast<std::string>((*this)[0]);
+		out += ")";
 		return out;
 	}
 public:
