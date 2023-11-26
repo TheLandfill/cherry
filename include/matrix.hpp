@@ -18,9 +18,9 @@ class Matrix_Base {};
 template<typename T>
 class Matrix : public Division_Ring<Matrix<T>>, public Matrix_Base {
 public:
-	Matrix(const T& fill, size_t rows, void * od = nullptr) : Matrix(fill, rows, rows, od) {}
+	Matrix(const T& fill, size_t rows, const std::shared_ptr<void>& od = nullptr) : Matrix(fill, rows, rows, od) {}
 
-	Matrix(const T& fill, size_t rows, size_t cols, void * od = nullptr) : num_rows(rows), num_cols(cols), data(num_rows * num_cols, fill), other_data(od) {
+	Matrix(const T& fill, size_t rows, size_t cols, const std::shared_ptr<void>& od = nullptr) : num_rows(rows), num_cols(cols), data(num_rows * num_cols, fill), other_data(od) {
 		if (num_rows == 0 || num_cols == 0) {
 			std::string error_message{std::format("Cannot create a matrix of dimensions {}x{}! Neither dimension can be zero.", num_rows, num_cols)};
 			throw std::length_error(error_message);
@@ -37,7 +37,7 @@ public:
 
 	Matrix<T> operator+(const Matrix<T>& other) const override {
 		check_addition_size(other, "add");
-		Matrix<T> out{zero<T>(other_data), num_rows, num_cols, other_data};
+		Matrix<T> out{zero<T>(other_data.get()), num_rows, num_cols, other_data};
 		for (size_t i = 0; i < data.size(); i++) {
 			T& c = out.data[i];
 			const T& a = data[i];
@@ -59,7 +59,7 @@ public:
 
 	Matrix<T> operator-(const Matrix<T>& other) const override {
 		check_addition_size(other, "subtract");
-		Matrix<T> out{zero<T>(other_data), num_rows, num_cols, other_data};
+		Matrix<T> out{zero<T>(other_data.get()), num_rows, num_cols, other_data};
 		for (size_t i = 0; i < data.size(); i++) {
 			T& c = out.data[i];
 			const T& a = data[i];
@@ -81,7 +81,7 @@ public:
 
 	Matrix<T> operator*(const Matrix<T>& other) const override {
 		check_multiplication_size(other);
-		Matrix<T> out{zero<T>(other_data), num_rows, other.num_cols, other_data};
+		Matrix<T> out{zero<T>(other_data.get()), num_rows, other.num_cols, other_data};
 		for (size_t i = 0; i < num_rows; i++) {
 			for (size_t j = 0; j < other.num_cols; j++) {
 				for (size_t k = 0; k < num_cols; k++) {
@@ -98,7 +98,7 @@ public:
 	}
 
 	Matrix<T> operator-() const override {
-		Matrix<T> out{zero<T>(other_data), num_rows, num_cols, other_data};
+		Matrix<T> out{zero<T>(other_data.get()), num_rows, num_cols, other_data};
 		for (size_t i = 0; i < data.size(); i++) {
 			T& a = out.data[i];
 			const T& b = data[i];
@@ -115,7 +115,7 @@ public:
 
 	Matrix<T> pow_u(unsigned int pow) const override {
 		check_square("Exponentiation");
-		Matrix<T> out{zero<T>(other_data), num_rows, num_cols, other_data};
+		Matrix<T> out{zero<T>(other_data.get()), num_rows, num_cols, other_data};
 		out.to_identity();
 		Matrix<T> val_pow{ *this };
 		while (pow > 0) {
@@ -156,8 +156,8 @@ public:
 	Matrix<T> inv() const override {
 		check_square("Inversion");
 		Matrix<T> dummy{*this};
-		T zero_v = zero<T>(other_data);
-		T one_v = one<T>(other_data);
+		T zero_v = zero<T>(other_data.get());
+		T one_v = one<T>(other_data.get());
 		Matrix<T> inverse{zero_v, num_rows, num_cols, other_data};
 		inverse.to_identity();
 		#ifdef SHOW_MATRIX_STEPS
@@ -216,8 +216,8 @@ public:
 
 	Matrix<T> rref() const {
 		Matrix<T> dummy{*this};
-		T zero_v = zero<T>(other_data);
-		T one_v = one<T>(other_data);
+		T zero_v = zero<T>(other_data.get());
+		T one_v = one<T>(other_data.get());
 		#ifdef SHOW_MATRIX_STEPS
 		std::cout << "Matrix is " << num_rows << "x" << num_cols << "\n";
 		std::cout << dummy;
@@ -280,13 +280,13 @@ public:
 	}
 
 	void to_zero() {
-		T val_to_set = zero<T>(other_data);
+		T val_to_set = zero<T>(other_data.get());
 		std::fill(data.begin(), data.end(), val_to_set);
 	}
 
 	void to_identity() {
 		to_zero();
-		T val_to_set = one<T>(other_data);
+		T val_to_set = one<T>(other_data.get());
 		for (size_t i = 0; i < std::min(num_rows, num_cols); i++) {
 			(*this)(i, i) = val_to_set;
 		}
@@ -315,7 +315,7 @@ public:
 
 	void to_nilpotent_diag(int start) {
 		to_zero();
-		T val_to_set = one<T>(other_data);
+		T val_to_set = one<T>(other_data.get());
 		if (start >= 0) {
 			for (size_t i = start; i < num_cols; i++) {
 				(*this)(i - start, i) = val_to_set;
@@ -336,7 +336,7 @@ public:
 
 	void to_circulant_diag(size_t start) {
 		to_zero();
-		T val_to_set = one<T>(other_data);
+		T val_to_set = one<T>(other_data.get());
 		for (size_t i = 0; i < num_rows; i++) {
 			(*this)(i, (i + start) % num_cols) = val_to_set;
 		}
@@ -389,7 +389,7 @@ public:
 	}
 
 	T trace() const {
-		T out{ zero<T>(other_data) };
+		T out{ zero<T>(other_data.get()) };
 		for (size_t i = 0; i < num_rows; i++) {
 			out += (*this)(i, i);
 		}
@@ -461,7 +461,7 @@ private:
 	size_t num_rows;
 	size_t num_cols;
 	std::vector<T> data;
-	void * other_data;
+	std::shared_ptr<void> other_data;
 };
 
 template<typename T, std::enable_if_t<std::is_base_of_v<Matrix_Base, T>, bool> = true>

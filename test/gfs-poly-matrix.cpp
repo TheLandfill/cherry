@@ -1,22 +1,23 @@
 #include "../include/gf.hpp"
+#include <memory>
 
 using namespace cherry;
 
 #define NAME_AND_VALUE(X) \
 std::cout << #X "\n" << X;
 
-int main() {
-	Polynomial<GF1<5>> irreducible_poly{{1, 4, 3, 1}};
-	GF<5> z = zero<GF<5>>(&irreducible_poly);
-	GF<5> o = one<GF<5>>(&irreducible_poly);
-	GF<5> a{irreducible_poly, {{3, 2, 1}}};
-	GF<5> b{irreducible_poly, {{3, 1, 4}}};
-	GF<5> c{irreducible_poly, {{0, 2, 1}}};
-	Matrix<GF<5>> mat_z{z, 3, &irreducible_poly};
-	Matrix<GF<5>> mat_o{o, 3, &irreducible_poly};
-	Matrix<GF<5>> mat_a{a, 3, &irreducible_poly};
-	Matrix<GF<5>> mat_b{b, 3, &irreducible_poly};
-	Matrix<GF<5>> mat_c{c, 3, &irreducible_poly};
+Matrix<GF<5>> return_matrix_from_function_test() {
+	std::shared_ptr<Polynomial<GF1<5>>> irreducible_poly = std::make_shared<Polynomial<GF1<5>>>(std::vector<GF1<5>>{1, 4, 3, 1});
+	GF<5> z = zero<GF<5>>(irreducible_poly.get());
+	GF<5> o = one<GF<5>>(irreducible_poly.get());
+	GF<5> a{*irreducible_poly.get(), {{3, 2, 1}}};
+	GF<5> b{*irreducible_poly.get(), {{3, 1, 4}}};
+	GF<5> c{*irreducible_poly.get(), {{0, 2, 1}}};
+	Matrix<GF<5>> mat_z{z, 3, irreducible_poly};
+	Matrix<GF<5>> mat_o{o, 3, irreducible_poly};
+	Matrix<GF<5>> mat_a{a, 3, irreducible_poly};
+	Matrix<GF<5>> mat_b{b, 3, irreducible_poly};
+	Matrix<GF<5>> mat_c{c, 3, irreducible_poly};
 	auto id{ mat_z };
 	id.to_identity();
 	auto circ{ mat_z };
@@ -43,4 +44,11 @@ int main() {
 	for (size_t i = 0; i < 10; i++) {
 		NAME_AND_VALUE((mat^i))
 	}
+	return mat;
+}
+
+int main() {
+	auto mat = return_matrix_from_function_test();
+	std::cout << "Matrix returned from test!\n";
+	std::cout << mat;
 }

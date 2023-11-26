@@ -8,8 +8,8 @@ class Cyclic_Multiplication_Group_Test {
 public:
 	using GFs = GF<p, Repr>;
 	bool operator()(const GFs& x, const Polynomial<GF1<p>> * poly) {
-		GFs gf1 = one(&x, static_cast<const void*>(poly));
-		GFs gf0 = zero(&x, static_cast<const void*>(poly));
+		GFs gf1 = one<GFs>(static_cast<const void*>(poly));
+		GFs gf0 = zero<GFs>(static_cast<const void*>(poly));
 		if (x == gf0) {
 			return false;
 		}

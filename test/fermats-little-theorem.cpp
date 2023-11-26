@@ -8,7 +8,7 @@ class Fermats_Little_Theorem_Single_Test {
 public:
 	using GFs = GF<p, Repr>;
 	bool operator()(const GFs& x, const Polynomial<GF1<p>>* poly) {
-		if (x == zero(&x, poly)) {
+		if (x == zero<GFs>(poly)) {
 			return true;
 		}
 		GFs to_negative_1 = x^-1;

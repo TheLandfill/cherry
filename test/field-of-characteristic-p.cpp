@@ -8,7 +8,7 @@ class Field_Of_Characteristic_P_Test {
 public:
 	using GFs = GF<p, Repr>;
 	bool operator()(const GFs& x, const Polynomial<GF1<p>> * poly) {
-		GFs gf0 = zero(&x, static_cast<const void*>(poly));
+		GFs gf0 = zero<GFs>(static_cast<const void*>(poly));
 		GFs y{ x };
 		for (unsigned int i = 1; i < p; i++) {
 			y += x;

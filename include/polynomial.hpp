@@ -145,7 +145,7 @@ public:
 public:
 	const static Polynomial<R> poly_zero(const void * other_data = nullptr) {
 		(void)other_data;
-		return { zero<R>(other_data) };
+		return {{ zero<R>(other_data) }};
 	}
 
 	const static Polynomial<R> poly_one(const void * other_data = nullptr) {

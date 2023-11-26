@@ -17,7 +17,7 @@ constexpr T one(const void * other_data = nullptr) {
 
 template<typename T, std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
 constexpr T inv(const T& val) {
-	T one_v = one(&val);
+	T one_v = one<T>();
 	return one_v / val;
 }
 

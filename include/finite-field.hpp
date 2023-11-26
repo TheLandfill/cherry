@@ -8,7 +8,8 @@
 
 namespace cherry {
 
-// Defined so that the product of any two numbers in the finite field is zero.
+// Defined so that the product of any two numbers in the finite field
+// fits in the data type.
 #define MAX_TYPE(p) typename std::conditional< \
 		p <= 16, \
 		std::uint8_t, \
