@@ -48,6 +48,9 @@ Matrix<GF<5>> return_matrix_from_function_test() {
 }
 
 int main() {
+	std::cout << "--------------------------------------------------------------------------------\n";
+	std::cout << __FILE__ << "\n";
+	std::cout << "--------------------------------------------------------------------------------\n";
 	auto mat = return_matrix_from_function_test();
 	std::cout << "Matrix returned from test!\n";
 	std::cout << mat;
