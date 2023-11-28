@@ -2,6 +2,7 @@
 #include "polynomial.hpp"
 #include "division-ring.hpp"
 #include "identities.hpp"
+#include "remove-v-tables.hpp"
 #include <cstdint>
 #include <stdexcept>
 #include <type_traits>
@@ -26,63 +27,63 @@ namespace cherry {
 	>::type
 
 template<uint32_t p>
-class GF1 : public Division_Ring<GF1<p>>, public GF1_Base {
+class GF1 : DIVISION_RING(GF1<p>) COMMA_IN_CLASS_INHERITANCE public GF1_Base {
 public:
 	GF1(uint32_t v) : val(v % p) {}
 	GF1() : val{0} {}
 
-	GF1<p> operator+(const GF1<p>& other) const override {
+	GF1<p> operator+(const GF1<p>& other) const OVERRIDE {
 		return (val + other.val) % p;
 	}
 
-	GF1<p>& operator+=(const GF1<p>& other) override {
+	GF1<p>& operator+=(const GF1<p>& other) OVERRIDE {
 		val += other.val;
 		val %= p;
 		return *this;
 	}
 
-	GF1<p> operator-() const override {
+	GF1<p> operator-() const OVERRIDE {
 		return p - val;
 	}
 
-	void negate() override {
+	void negate() OVERRIDE {
 		val = p - val;
 	}
 
-	GF1<p> operator-(const GF1<p>& other) const override {
+	GF1<p> operator-(const GF1<p>& other) const OVERRIDE {
 		return 2 * p + val - other.val;
 	}
 
-	GF1<p>& operator-=(const GF1<p>& other) override {
+	GF1<p>& operator-=(const GF1<p>& other) OVERRIDE {
 		val += p - other.val;
 		val %= p;
 		return *this;
 	}
 
-	GF1<p> operator*(const GF1<p>& other) const override {
+	GF1<p> operator*(const GF1<p>& other) const OVERRIDE {
 		return val * other.val;
 	}
 
-	GF1<p>& operator*=(const GF1<p>& other) override {
+	GF1<p>& operator*=(const GF1<p>& other) OVERRIDE {
 		val *= other.val;
 		val %= p;
 		return *this;
 	}
 
-	GF1<p> operator/(const GF1<p>& other) const override {
+	GF1<p> operator/(const GF1<p>& other) const OVERRIDE {
 		return *this * (other^-1);
 	}
 
-	GF1<p>& operator/=(const GF1<p>& other) override {
+	GF1<p>& operator/=(const GF1<p>& other) OVERRIDE {
 		*this *= (other^-1);
 		return *this;
 	}
 
-	GF1<p> inv() const override {
+	GF1<p> inv() const OVERRIDE {
 		return (*this)^-1;
 	}
 
-	GF1<p> operator^(int pow) const override {
+	GF1<p> operator^(int pow) const OVERRIDE {
 		if (pow < 0 && val == 0) {
 			throw std::domain_error(
 				"Trying to take the multiplicative inverse of "
@@ -96,7 +97,7 @@ public:
 		return pow_u(pow);
 	}
 
-	GF1<p> pow_u(uint32_t pow) const override {
+	GF1<p> pow_u(uint32_t pow) const OVERRIDE {
 		if (val <= 1) {
 			return val;
 		}
@@ -143,7 +144,7 @@ template<uint32_t p>
 class GF_Mat;
 
 template<uint32_t p, typename Repr = GF_Mat<p>>
-class GF : public Division_Ring<GF<p, Repr>>, public GF_Base {
+class GF : DIVISION_RING(GF<p COMMA Repr>) COMMA_IN_CLASS_INHERITANCE public GF_Base {
 public:
 	GF(const Polynomial<GF1<p>>& irreducible_poly) :
 		order(
@@ -165,45 +166,45 @@ public:
 	GF(const Repr& v) : val(v) {}
 	using GFs = GF<p, Repr>;
 
-	GFs operator+(const GFs& other) const override {
+	GFs operator+(const GFs& other) const OVERRIDE {
 		GFs out{ *this };
 		out.val = val + other.val;
 		return out;
 	}
 
-	GFs& operator+=(const GFs& other) override {
+	GFs& operator+=(const GFs& other) OVERRIDE {
 		val += other.val;
 		return *this;
 	}
 
-	GFs operator-() const override {
+	GFs operator-() const OVERRIDE {
 		GFs out{ *this };
 		out.val = -out.val;
 		return out;
 	}
 
-	void negate() override {
+	void negate() OVERRIDE {
 		val.negate();
 	}
 
-	GFs operator-(const GFs& other) const override {
+	GFs operator-(const GFs& other) const OVERRIDE {
 		GFs out{ *this };
 		out.val = val - other.val;
 		return out;
 	}
 
-	GFs& operator-=(const GFs& other) override {
+	GFs& operator-=(const GFs& other) OVERRIDE {
 		val -= other.val;
 		return *this;
 	}
 
-	GFs operator*(const GFs& other) const override {
+	GFs operator*(const GFs& other) const OVERRIDE {
 		GFs out{ *this };
 		out.val = val * other.val;
 		return out;
 	}
 
-	GFs& operator*=(const GFs& other) override {
+	GFs& operator*=(const GFs& other) OVERRIDE {
 		val *= other.val;
 		return *this;
 	}
@@ -217,28 +218,28 @@ public:
 		val *= other;
 		return *this;
 	}
-	GFs operator/(const GFs& other) const override {
+	GFs operator/(const GFs& other) const OVERRIDE {
 		return (*this) * other.inv();
 	}
 
-	GFs& operator/=(const GFs& other) override {
+	GFs& operator/=(const GFs& other) OVERRIDE {
 		(*this) *= other.inv();
 		return *this;
 	}
 
-	GFs operator^(int pow) const override {
+	GFs operator^(int pow) const OVERRIDE {
 		GFs out{ *this };
 		out.val = out.val^pow;
 		return out;
 	}
 
-	GFs pow_u(uint32_t pow) const override {
+	GFs pow_u(uint32_t pow) const OVERRIDE {
 		GFs out{ *this };
 		out.val = out.val.pow_u(pow);
 		return out;
 	}
 
-	GFs inv() const override {
+	GFs inv() const OVERRIDE {
 		GFs out{ *this };
 		out.val = out.val.inv();
 		return out;

@@ -1,6 +1,7 @@
 #pragma once
 #include "division-ring.hpp"
 #include "identities.hpp"
+#include "remove-v-tables.hpp"
 #include <cstdlib>
 #include <stdexcept>
 #include <vector>
@@ -16,7 +17,7 @@ class Matrix_Base {};
 // element has an inverse because I want the operation of division to be
 // available in the class.
 template<typename T>
-class Matrix : public Division_Ring<Matrix<T>>, public Matrix_Base {
+class Matrix : DIVISION_RING(Matrix<T>) COMMA_IN_CLASS_INHERITANCE public Matrix_Base {
 public:
 	Matrix(const T& fill, size_t rows, const std::shared_ptr<void>& od = nullptr) : Matrix(fill, rows, rows, od) {}
 
@@ -35,7 +36,7 @@ public:
 		return data[r * num_cols + c];
 	}
 
-	Matrix<T> operator+(const Matrix<T>& other) const override {
+	Matrix<T> operator+(const Matrix<T>& other) const OVERRIDE {
 		check_addition_size(other, "add");
 		Matrix<T> out{zero<T>(other_data.get()), num_rows, num_cols, other_data};
 		for (size_t i = 0; i < data.size(); i++) {
@@ -47,7 +48,7 @@ public:
 		return out;
 	}
 
-	Matrix<T>& operator+=(const Matrix<T>& other) override {
+	Matrix<T>& operator+=(const Matrix<T>& other) OVERRIDE {
 		check_addition_size(other, "add");
 		for (size_t i = 0; i < data.size(); i++) {
 			T& a = data[i];
@@ -57,7 +58,7 @@ public:
 		return *this;
 	}
 
-	Matrix<T> operator-(const Matrix<T>& other) const override {
+	Matrix<T> operator-(const Matrix<T>& other) const OVERRIDE {
 		check_addition_size(other, "subtract");
 		Matrix<T> out{zero<T>(other_data.get()), num_rows, num_cols, other_data};
 		for (size_t i = 0; i < data.size(); i++) {
@@ -69,7 +70,7 @@ public:
 		return out;
 	}
 
-	Matrix<T>& operator-=(const Matrix<T>& other) override {
+	Matrix<T>& operator-=(const Matrix<T>& other) OVERRIDE {
 		check_addition_size(other, "subtract");
 		for (size_t i = 0; i < data.size(); i++) {
 			T& a = data[i];
@@ -79,7 +80,7 @@ public:
 		return *this;
 	}
 
-	Matrix<T> operator*(const Matrix<T>& other) const override {
+	Matrix<T> operator*(const Matrix<T>& other) const OVERRIDE {
 		check_multiplication_size(other);
 		Matrix<T> out{zero<T>(other_data.get()), num_rows, other.num_cols, other_data};
 		for (size_t i = 0; i < num_rows; i++) {
@@ -92,12 +93,12 @@ public:
 		return out;
 	}
 
-	Matrix<T>& operator*=(const Matrix<T>& other) override {
+	Matrix<T>& operator*=(const Matrix<T>& other) OVERRIDE {
 		*this = (*this * other);
 		return *this;
 	}
 
-	Matrix<T> operator-() const override {
+	Matrix<T> operator-() const OVERRIDE {
 		Matrix<T> out{zero<T>(other_data.get()), num_rows, num_cols, other_data};
 		for (size_t i = 0; i < data.size(); i++) {
 			T& a = out.data[i];
@@ -107,13 +108,13 @@ public:
 		return out;
 	}
 
-	void negate() override {
+	void negate() OVERRIDE {
 		for (size_t i = 0; i < data.size(); i++) {
 			data[i] = -data[i];
 		}
 	}
 
-	Matrix<T> pow_u(unsigned int pow) const override {
+	Matrix<T> pow_u(unsigned int pow) const OVERRIDE {
 		check_square("Exponentiation");
 		Matrix<T> out{zero<T>(other_data.get()), num_rows, num_cols, other_data};
 		out.to_identity();
@@ -128,7 +129,7 @@ public:
 		return out;
 	}
 
-	Matrix<T> operator^(int pow) const override {
+	Matrix<T> operator^(int pow) const OVERRIDE {
 		if (pow < 0) {
 			return inv().pow_u(static_cast<unsigned int>(std::abs(pow)));
 		} else {
@@ -144,16 +145,16 @@ public:
 		return num_cols;
 	}
 
-	Matrix<T> operator/(const Matrix<T>& other) const override {
+	Matrix<T> operator/(const Matrix<T>& other) const OVERRIDE {
 		return (*this) * other.inv();
 	}
 
-	Matrix<T>& operator/=(const Matrix<T>& other) override {
+	Matrix<T>& operator/=(const Matrix<T>& other) OVERRIDE {
 		*this *= other.inv();
 		return *this;
 	}
 
-	Matrix<T> inv() const override {
+	Matrix<T> inv() const OVERRIDE {
 		check_square("Inversion");
 		Matrix<T> dummy{*this};
 		T zero_v = zero<T>(other_data.get());
