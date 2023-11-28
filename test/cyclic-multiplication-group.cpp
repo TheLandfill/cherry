@@ -1,4 +1,5 @@
 #include "test-one-possibility.hpp"
+#include "simple-timer.hpp"
 #include "../include/gf-matrix.hpp"
 
 using namespace cherry;
@@ -36,6 +37,7 @@ public:
 };
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";

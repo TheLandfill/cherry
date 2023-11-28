@@ -1,9 +1,11 @@
+#include "simple-timer.hpp"
 #define SHOW_MATRIX_STEPS
 #include "../include/gf-matrix.hpp"
 
 using namespace cherry;
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";

@@ -11,13 +11,11 @@
 
 namespace cherry {
 
-class Matrix_Base {};
-
 // Note that I'm classifying a matrix as a division ring even though not every
 // element has an inverse because I want the operation of division to be
 // available in the class.
 template<typename T>
-class Matrix : DIVISION_RING(Matrix<T>) COMMA_IN_CLASS_INHERITANCE public Matrix_Base {
+class Matrix COLON_IN_CLASS_INHERITANCE DIVISION_RING(Matrix<T>) COMMA_IN_CLASS_INHERITANCE {
 public:
 	Matrix(const T& fill, size_t rows, const std::shared_ptr<void>& od = nullptr) : Matrix(fill, rows, rows, od) {}
 
@@ -422,13 +420,13 @@ public:
 		return other_data.use_count();
 	}
 public:
-	const static Matrix<T> matrix_zero(const void *& other_data) {
+	const static Matrix<T> member_zero(const void *& other_data) {
 		Other_Data o_data = *static_cast<Other_Data*>(other_data);
 		return Matrix<T>{zero<T>(o_data.other_data), o_data.rows, o_data.cols, o_data.other_data};
 	}
 
-	const static Matrix<T> matrix_one(const void *& other_data) {
-		Matrix<T> out(Matrix<T>::matrix_zero(other_data));
+	const static Matrix<T> member_one(const void *& other_data) {
+		Matrix<T> out(Matrix<T>::member_zero(other_data));
 		out.to_identity();
 		return out;
 	}
@@ -483,16 +481,6 @@ private:
 	std::vector<T> data;
 	std::shared_ptr<void> other_data;
 };
-
-template<typename T, std::enable_if_t<std::is_base_of_v<Matrix_Base, T>, bool> = true>
-constexpr T zero(void * other_data) {
-	return T::matrix_zero(other_data);
-}
-
-template<typename T, std::enable_if_t<std::is_base_of_v<Matrix_Base, T>, bool> = true>
-constexpr T one(void * other_data) {
-	return T::matrix_one(other_data);
-}
 
 template<typename T>
 Matrix<T> operator*(const T& scalar, const Matrix<T>& matrix) {

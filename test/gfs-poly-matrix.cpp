@@ -1,4 +1,5 @@
 #include "../include/gf.hpp"
+#include "simple-timer.hpp"
 
 using namespace cherry;
 
@@ -52,6 +53,7 @@ Matrix<GF<5>> return_matrix_from_function_test() {
 }
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";

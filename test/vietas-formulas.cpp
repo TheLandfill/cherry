@@ -1,4 +1,5 @@
 #include "set-coeffs.hpp"
+#include "simple-timer.hpp"
 
 using namespace cherry;
 
@@ -85,6 +86,7 @@ private:
 };
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";

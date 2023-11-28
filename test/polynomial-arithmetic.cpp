@@ -1,4 +1,5 @@
 #include "../include/gf.hpp"
+#include "simple-timer.hpp"
 
 using namespace cherry;
 
@@ -89,6 +90,7 @@ void test_gf5_polynomials() {
 }
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";

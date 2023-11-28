@@ -1,4 +1,5 @@
 #pragma once
+#include <cctype>
 #include <type_traits>
 
 namespace cherry {
@@ -26,30 +27,40 @@ T inv(const T& a) {
 	return a.inv();
 }
 
-class GF1_Base {};
-
-template<typename T, std::enable_if_t<std::is_base_of_v<GF1_Base, T>, bool> = true>
+template<typename T, std::enable_if<std::is_compound<T>::value>::type* = nullptr>
 constexpr T zero(const void * other_data = nullptr) {
-	(void)other_data;
-	return 0;
+	return T::member_zero(other_data);
 }
 
-template<typename T, std::enable_if_t<std::is_base_of_v<GF1_Base, T>, bool> = true>
+template<typename T, std::enable_if<std::is_compound<T>::value>::type* = nullptr>
 constexpr T one(const void * other_data = nullptr) {
-	(void)other_data;
-	return 1;
+	return T::member_one(other_data);
 }
 
-class GF_Base {};
-
-template<typename T, std::enable_if_t<std::is_base_of_v<GF_Base, T>, bool> = true>
-constexpr T zero(const void * other_data) {
-	return T::gfs_zero(other_data);
-}
-
-template<typename T, std::enable_if_t<std::is_base_of_v<GF_Base, T>, bool> = true>
-constexpr T one(const void * other_data) {
-	return T::gfs_one(other_data);
-}
+// class GF1_Base {};
+// 
+// template<typename T, std::enable_if_t<std::is_base_of_v<GF1_Base, T>, bool> = true>
+// constexpr T zero(const void * other_data = nullptr) {
+// 	(void)other_data;
+// 	return 0;
+// }
+// 
+// template<typename T, std::enable_if_t<std::is_base_of_v<GF1_Base, T>, bool> = true>
+// constexpr T one(const void * other_data = nullptr) {
+// 	(void)other_data;
+// 	return 1;
+// }
+// 
+// class GF_Base {};
+// 
+// template<typename T, std::enable_if_t<std::is_base_of_v<GF_Base, T>, bool> = true>
+// constexpr T zero(const void * other_data) {
+// 	return T::gfs_zero(other_data);
+// }
+// 
+// template<typename T, std::enable_if_t<std::is_base_of_v<GF_Base, T>, bool> = true>
+// constexpr T one(const void * other_data) {
+// 	return T::gfs_one(other_data);
+// }
 
 }

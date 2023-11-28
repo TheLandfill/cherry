@@ -1,5 +1,6 @@
 #include "../include/finite-field.hpp"
 #include "../include/gf-matrix.hpp"
+#include "simple-timer.hpp"
 #include "test-two-possibilities.hpp"
 
 using namespace cherry;
@@ -29,6 +30,7 @@ private:
 };
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";

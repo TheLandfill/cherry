@@ -9,7 +9,7 @@ namespace cherry {
 class GF_Mat_Base {};
 
 template<unsigned int p>
-class GF_Mat : public Division_Ring<GF_Mat<p>>, public GF_Mat_Base {
+class GF_Mat : DIVISION_RING(GF_Mat<p>) COMMA_IN_CLASS_INHERITANCE public GF_Mat_Base {
 public:
 	GF_Mat() {}
 	GF_Mat(const Polynomial<GF1<p>>& irr) : val{GF1<p>{0}, irr.degree()}, lambda{GF1<p>{0}, irr.degree()} {
@@ -34,43 +34,43 @@ public:
 		}
 	}
 
-	GF_Mat operator+(const GF_Mat& other) const override {
+	GF_Mat operator+(const GF_Mat& other) const OVERRIDE {
 		check_if_same_polynomial(other);
 		GF_Mat out{ *this };
 		out.val += other.val;
 		return out;
 	}
 
-	GF_Mat& operator+=(const GF_Mat& other) override {
+	GF_Mat& operator+=(const GF_Mat& other) OVERRIDE {
 		check_if_same_polynomial(other);
 		val += other.val;
 		return *this;
 	}
 
-	GF_Mat operator-() const override {
+	GF_Mat operator-() const OVERRIDE {
 		GF_Mat out{ *this };
 		out.val = -out.val;
 		return out;
 	}
 
-	GF_Mat operator-(const GF_Mat& other) const override {
+	GF_Mat operator-(const GF_Mat& other) const OVERRIDE {
 		check_if_same_polynomial(other);
 		GF_Mat out{ *this };
 		out.val -= other.val;
 		return out;
 	}
 
-	void negate() override {
+	void negate() OVERRIDE {
 		val.negate();
 	}
 
-	GF_Mat& operator-=(const GF_Mat& other) override {
+	GF_Mat& operator-=(const GF_Mat& other) OVERRIDE {
 		check_if_same_polynomial(other);
 		val -= other.val;
 		return *this;
 	}
 
-	GF_Mat operator*(const GF_Mat& other) const override {
+	GF_Mat operator*(const GF_Mat& other) const OVERRIDE {
 		check_if_same_polynomial(other);
 		GF_Mat out{ *this };
 		out.val *= other.val;
@@ -83,7 +83,7 @@ public:
 		return out;
 	}
 
-	GF_Mat& operator*=(const GF_Mat& other) override {
+	GF_Mat& operator*=(const GF_Mat& other) OVERRIDE {
 		check_if_same_polynomial(other);
 		val *= other.val;
 		return *this;
@@ -94,30 +94,30 @@ public:
 		return *this;
 	}
 
-	GF_Mat operator/(const GF_Mat& other) const override {
+	GF_Mat operator/(const GF_Mat& other) const OVERRIDE {
 		check_if_same_polynomial(other);
 		return (*this) * other.inv();
 	}
 
-	GF_Mat& operator/=(const GF_Mat& other) override {
+	GF_Mat& operator/=(const GF_Mat& other) OVERRIDE {
 		check_if_same_polynomial(other);
 		(*this) *= other.inv();
 		return *this;
 	}
 
-	GF_Mat operator^(int pow) const override {
+	GF_Mat operator^(int pow) const OVERRIDE {
 		GF_Mat out{*this};
 		out.val = out.val^pow;
 		return out;
 	}
 
-	GF_Mat pow_u(unsigned int pow) const override {
+	GF_Mat pow_u(unsigned int pow) const OVERRIDE {
 		GF_Mat out{*this};
 		out.val = out.val.pow_u(pow);
 		return out;
 	}
 
-	GF_Mat inv() const override {
+	GF_Mat inv() const OVERRIDE {
 		GF_Mat out{*this};
 		out.val = out.val.inv();
 		return out;

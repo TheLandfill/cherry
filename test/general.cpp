@@ -1,12 +1,14 @@
 #include "../include/finite-field.hpp"
 #include "../include/matrix.hpp"
 #include "../include/gf-matrix.hpp"
+#include "simple-timer.hpp"
 #include <iostream>
 #include <bit>
 
 using namespace cherry;
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";

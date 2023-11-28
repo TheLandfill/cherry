@@ -1,3 +1,4 @@
+#include "simple-timer.hpp"
 #include "test-one-possibility.hpp"
 #include "../include/gf-matrix.hpp"
 
@@ -28,6 +29,7 @@ private:
 };
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";

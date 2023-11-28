@@ -169,27 +169,17 @@ public:
 		return out;
 	}
 public:
-	const static Polynomial<R> poly_zero(const void * other_data = nullptr) {
+	static Polynomial<R> member_zero(const void * other_data = nullptr) {
 		(void)other_data;
 		return {{ zero<R>(other_data) }};
 	}
 
-	const static Polynomial<R> poly_one(const void * other_data = nullptr) {
+	static Polynomial<R> member_one(const void * other_data = nullptr) {
 		return {{ one<R>(other_data) }};
 	}
 private:
 	std::vector<R> coeffs;
 };
-
-template<typename T, std::enable_if_t<std::is_base_of_v<Polynomial_Base, T>, bool> = true>
-constexpr T zero(const void * other_data = nullptr) {
-	return T::poly_zero(other_data);
-}
-
-template<typename T, std::enable_if_t<std::is_base_of_v<Polynomial_Base, T>, bool> = true>
-constexpr T one(const void * other_data = nullptr) {
-	return T::poly_one(other_data);
-}
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const Polynomial<T>& polynomial) {

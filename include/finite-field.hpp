@@ -27,7 +27,7 @@ namespace cherry {
 	>::type
 
 template<uint32_t p>
-class GF1 : DIVISION_RING(GF1<p>) COMMA_IN_CLASS_INHERITANCE public GF1_Base {
+class GF1 COLON_IN_CLASS_INHERITANCE DIVISION_RING(GF1<p>) {
 public:
 	GF1(uint32_t v) : val(v % p) {}
 	GF1() : val{0} {}
@@ -129,6 +129,16 @@ public:
 	explicit operator std::string() const {
 		return to_string();
 	}
+public:
+	static GF1<p> member_zero(const void * other_data = nullptr) {
+		(void)other_data;
+		return 0;
+	}
+
+	static GF1<p> member_one(const void * other_data = nullptr) {
+		(void)other_data;
+		return 1;
+	}
 private:
 	MAX_TYPE(p) val;
 };
@@ -144,7 +154,7 @@ template<uint32_t p>
 class GF_Mat;
 
 template<uint32_t p, typename Repr = GF_Mat<p>>
-class GF : DIVISION_RING(GF<p COMMA Repr>) COMMA_IN_CLASS_INHERITANCE public GF_Base {
+class GF COLON_IN_CLASS_INHERITANCE DIVISION_RING(GF<p COMMA Repr>) {
 public:
 	GF(const Polynomial<GF1<p>>& irreducible_poly) :
 		order(
@@ -265,12 +275,12 @@ public:
 		return to_string();
 	}
 public:
-	const static GFs gfs_zero(const void * other_data) {
+	static GFs member_zero(const void * other_data) {
 		const Polynomial<GF1<p>>& irreducible_poly = *static_cast<const Polynomial<GF1<p>>*>(other_data);
 		return GFs{irreducible_poly};
 	}
 
-	const static GFs gfs_one(const void * other_data) {
+	static GFs member_one(const void * other_data) {
 		const Polynomial<GF1<p>>& irreducible_poly = *static_cast<const Polynomial<GF1<p>>*>(other_data);
 		return GFs{irreducible_poly, one<Polynomial<GF1<p>>>()};
 	}

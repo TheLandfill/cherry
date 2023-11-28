@@ -1,4 +1,5 @@
 #include "../include/gf.hpp"
+#include "simple-timer.hpp"
 #include <iostream>
 
 using namespace cherry;
@@ -57,6 +58,7 @@ void gf_general_test() {
 }
 
 int main() {
+	Timer t(__FILE__);
 	std::cout << "--------------------------------------------------------------------------------\n";
 	std::cout << __FILE__ << "\n";
 	std::cout << "--------------------------------------------------------------------------------\n";
