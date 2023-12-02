@@ -38,7 +38,8 @@ public:
 
 	GF1<p>& operator+=(const GF1<p>& other) OVERRIDE {
 		val += other.val;
-		val %= p;
+		// val %= p;
+		val -= p & -(val >= p);
 		return *this;
 	}
 
@@ -56,7 +57,8 @@ public:
 
 	GF1<p>& operator-=(const GF1<p>& other) OVERRIDE {
 		val += p - other.val;
-		val %= p;
+		// val %= p;
+		val -= p & -(val >= p);
 		return *this;
 	}
 
