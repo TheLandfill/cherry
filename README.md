@@ -165,9 +165,9 @@ directory.
 Here's a list of all the features the code does not support:
 
 -   **Finite Fields**
-    -   **Detecting Out Non-Fields:** You can do `GF1<6>` and no one will stop
-        you. I could implement a compile-time algorithm for checking primes,
-        but that would make the build times take way too long. Instead, your
+    -   **Detecting Non-Fields:** You can do `GF1<6>` and no one will stop you.
+        I could implement a compile-time algorithm for checking primes, but
+        that could make the build times take way too long. Instead, your
         program is just going to crash during runtime. This shouldn't be a
         problem because you should be checking whether an integer is prime
         before putting it into the code.

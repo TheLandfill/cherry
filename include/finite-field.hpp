@@ -29,7 +29,7 @@ namespace cherry {
 template<uint32_t p>
 class GF1 COLON_IN_CLASS_INHERITANCE DIVISION_RING(GF1<p>) {
 public:
-	GF1(uint32_t v) : val(v % p) {}
+	GF1(uint64_t v) : val(v % p) {}
 	GF1() : val{0} {}
 
 	GF1<p> operator+(const GF1<p>& other) const OVERRIDE {
@@ -38,8 +38,15 @@ public:
 
 	GF1<p>& operator+=(const GF1<p>& other) OVERRIDE {
 		val += other.val;
-		// val %= p;
-		val -= p & -(val >= p);
+		// val %= p;									// Ol' Reliable
+		// val -= p & -(val >= p);						// Fastest, but may not
+		// 												   be for larger ints
+		// const MAX_TYPE(p) diff[]{ 0, p };			// Trash
+		// static const MAX_TYPE(p) diff[]{ 0, p };		// About the same as mod
+		// val -= diff[val >= p];
+		// if (val >= p) {								// About the same as mod
+		// 	val -= p;
+		// }
 		return *this;
 	}
 
