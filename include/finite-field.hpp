@@ -38,7 +38,7 @@ public:
 
 	GF1<p>& operator+=(const GF1<p>& other) OVERRIDE {
 		val += other.val;
-		// val %= p;									// Ol' Reliable
+		val %= p;									// Ol' Reliable
 		// val -= p & -(val >= p);						// Fastest, but may not
 		// 												   be for larger ints
 		// const MAX_TYPE(p) diff[]{ 0, p };			// Trash
@@ -64,8 +64,8 @@ public:
 
 	GF1<p>& operator-=(const GF1<p>& other) OVERRIDE {
 		val += p - other.val;
-		// val %= p;
-		val -= p & -(val >= p);
+		val %= p;
+		// val -= p & -(val >= p);
 		return *this;
 	}
 

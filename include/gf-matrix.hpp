@@ -2,6 +2,7 @@
 #include "finite-field.hpp"
 #include "matrix.hpp"
 #include <algorithm>
+#include <memory>
 #include <stdexcept>
 
 namespace cherry {
@@ -12,7 +13,19 @@ template<unsigned int p>
 class GF_Mat : DIVISION_RING(GF_Mat<p>) COMMA_IN_CLASS_INHERITANCE public GF_Mat_Base {
 public:
 	GF_Mat() {}
-	GF_Mat(const Polynomial<GF1<p>>& irr) : val{GF1<p>{0}, irr.degree()}, lambda{GF1<p>{0}, irr.degree()} {
+	GF_Mat(const Polynomial<GF1<p>>& irr) :
+	irreducible_poly_ptr{std::make_shared<Polynomial<GF1<p>>>(irr)},
+	val{
+		GF1<p>{0},
+		irr.degree(),
+		irreducible_poly_ptr
+	},
+	lambda{
+		GF1<p>{0},
+		irr.degree(),
+		irreducible_poly_ptr
+	}
+{
 		lambda.to_nilpotent_diag(1);
 		auto irreducible = irr;
 		irreducible *= cherry::inv(irreducible[irreducible.degree()]);
@@ -181,6 +194,7 @@ public:
 		return coeffs;
 	}
 private:
+	std::shared_ptr<void> irreducible_poly_ptr;
 	Matrix<GF1<p>> val;
 	Matrix<GF1<p>> lambda;
 };

@@ -4,35 +4,35 @@
 
 namespace cherry {
 
-template<typename T, std::enable_if<std::is_fundamental<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr>
 constexpr T zero(const void * other_data = nullptr) {
 	(void)other_data;
 	return 0;
 }
 
-template<typename T, std::enable_if<std::is_fundamental<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr>
 constexpr T one(const void * other_data = nullptr) {
 	(void)other_data;
 	return 1;
 }
 
-template<typename T, std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
 constexpr T inv(const T& val) {
 	T one_v = one<T>();
 	return one_v / val;
 }
 
-template<typename T, std::enable_if<std::is_compound<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<std::is_compound<T>::value>::type* = nullptr>
 T inv(const T& a) {
 	return a.inv();
 }
 
-template<typename T, std::enable_if<std::is_compound<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<std::is_compound<T>::value>::type* = nullptr>
 constexpr T zero(const void * other_data = nullptr) {
 	return T::member_zero(other_data);
 }
 
-template<typename T, std::enable_if<std::is_compound<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<std::is_compound<T>::value>::type* = nullptr>
 constexpr T one(const void * other_data = nullptr) {
 	return T::member_one(other_data);
 }
