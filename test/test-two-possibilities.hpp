@@ -28,6 +28,7 @@ void run_function_on_all_double_cases(
 	for (uint64_t i = 0; i < num_elements; i++) {
 		set_coeffs(i, x_coeffs);
 		for (uint64_t j = 0; j < num_elements; j++) {
+			std::cout << "\r\x1b[K(" << i << " / " << num_elements << ") (" << j << " / " << num_elements << ")" << std::flush;
 			set_coeffs(j, y_coeffs);
 			GFs x{irreducible_poly, x_coeffs};
 			GFs y{irreducible_poly, y_coeffs};
