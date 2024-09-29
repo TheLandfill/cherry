@@ -2,6 +2,10 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
+#ifdef DEBUG
+#include <iostream>
+#include <format>
+#endif
 #include "identities.hpp"
 #include "vector.hpp"
 
@@ -144,33 +148,25 @@ private:
 };
 
 template<
-	size_t Num_Dimensions = 1,
-	validation::Valid_Input_Type Input_Type = Vector<Num_Dimensions, double>,
+	validation::Valid_Input_Type Input_Type = Vector<1, double>,
 	typename Scale_Type = double
 >
 requires validation::Type_And_Scale_Type_Match<Input_Type, Scale_Type>
-class Simpsons_Rule {
+class Trapezoid_Rule_Value_Generator {
 public:
-	Simpsons_Rule(
+	Trapezoid_Rule_Value_Generator(
 		const Interval<Input_Type>& iv,
-		const Vector<Num_Dimensions, size_t>& ns,
-		Scale_Type offset = one_half<Scale_Type>(),
-		Scale_Type one_v = one<Scale_Type>()
+		const Vector<1, size_t>& num_divisions_not_counting_endpoints,
+		Scale_Type one_half_v = one_half<Scale_Type>()
 	) :
 		intervals{iv},
-		num_splits{ns},
-		scale{one_v}
+		num_splits{num_divisions_not_counting_endpoints},
+		scale{one_half_v}
 	{
 		cur_iteration.to_zero_vector();
 		cur_delta_input = intervals.end - intervals.start;
-		for (size_t i = 0; i < Num_Dimensions; i++) {
-			cur_delta_input[i] /= num_splits[i];
-		}
-		intervals.start += cur_delta_input * offset;
-		intervals.end += cur_delta_input * offset;
-		for (size_t i = 0; i < Num_Dimensions; i++) {
-			scale *= cur_delta_input[i];
-		}
+		cur_delta_input[0] /= num_splits[0];
+		scale *= cur_delta_input[0];
 		cur_value = intervals.start;
 	}
 
@@ -179,47 +175,59 @@ public:
 	}
 
 	void next_input() {
-		for (size_t i = 0; i < Num_Dimensions; i++) {
-			cur_iteration[i]++;
-			if (cur_iteration[i] != num_splits[i]) {
-				cur_value[i] = intervals.start[i] + cur_delta_input[i] * cur_iteration[i];
+		cur_iteration[0]++;
+		if (stage == 0) [[unlikely]] {
+			cur_value[0] = intervals.end[0];
+			if (cur_iteration[0] == 1) {
 				return;
+			} else {
+				cur_iteration[0] = 1;
+				stage++;
+				not_all_inputs_used = false;
+				cur_value[0] = intervals.start[0] + cur_delta_input[0];
 			}
-			cur_iteration[i] = 0;
-			cur_value[i] = intervals.start[i];
 		}
+		if (cur_iteration[0] < num_splits[0]) {
+			cur_value[0] = intervals.start[0] + cur_delta_input[0] * cur_iteration[0];
+			return;
+		}
+		stage++;
 		not_all_inputs_used = false;
 	}
 
 	void next_scale() {
 		scale *= 2.0;
-		stage++;
+		not_all_inputs_used = cur_iteration[0] < num_splits[0];
 	}
 
 	bool has_inputs() const {
-		return stage <= 2 * Num_Dimensions;
+		return stage < 2;
 	}
 
 	bool has_sub_inputs() const {
-		return has_inputs();
+		return not_all_inputs_used;
 	}
 
 	Scale_Type cur_scale() const {
 		return scale;
 	}
 
+	size_t get_num_splits() const {
+		return num_splits[0];
+	}
+
 	void reset() {
 		cur_iteration.to_zero_vector();
 		cur_delta_input = intervals.end - intervals.start;
-		for (size_t i = 0; i < Num_Dimensions; i++) {
-			cur_delta_input[i] /= num_splits[i];
+		if (num_splits[0] > 0) {
+			cur_delta_input[0] /= num_splits[0];
 		}
 		cur_value = intervals.start;
 	}
 private:
 	Interval<Input_Type> intervals;
-	Vector<Num_Dimensions, size_t> num_splits;
-	Vector<Num_Dimensions, size_t> cur_iteration;
+	Vector<1, size_t> num_splits;
+	Vector<1, size_t> cur_iteration;
 	Input_Type cur_value;
 	Input_Type cur_delta_input;
 	Scale_Type scale;
@@ -248,7 +256,11 @@ Output_Type n_integrate(Input_Value_Generator& input_value_generator, Func f) {
 	while (input_value_generator.has_inputs()) {
 		Output_Type sum{};
 		while (input_value_generator.has_sub_inputs()) {
-			sum += f(input_value_generator.cur_input());
+			const Input_Type& in = input_value_generator.cur_input();
+			sum += f(in);
+			#ifdef DEBUG
+			std::cout << std::format("({:7}, {:2.3}, {:2.3})\n", input_value_generator.get_num_splits(), in[0], input_value_generator.cur_scale());
+			#endif
 			input_value_generator.next_input();
 		}
 		sum *= input_value_generator.cur_scale();
