@@ -24,6 +24,9 @@ public:
 	// scalar multiplication
 	Vector<N, T>  operator* (const T& s) const;
 	Vector<N, T>& operator*=(const T& s);
+	// scalar division
+	Vector<N, T>  operator/ (const T& s) const;
+	Vector<N, T>& operator/=(const T& s);
 	// dot product
 	T    operator* (const Vector<N, T>& s) const;
 	// magnitude
@@ -34,7 +37,9 @@ public:
 	// returns a normalized copy of the vector
 	Vector<N, T> normalized() const;
 	Vector<N, T> get_part_of_vector_not_in_direction(const Vector<N, T>& v) const;
-	void to_zero_vector();
+	void to_zero_vector(const void * other_data = nullptr);
+	static Vector<N, T> member_one(const void * other_data = nullptr);
+	static Vector<N, T> member_zero(const void * other_data = nullptr);
 public:
 	//std::array<T, N> x;
 	T x[N];
@@ -116,6 +121,23 @@ Vector<N, T>& Vector<N, T>::operator*=(const T& s) {
 }
 
 template <size_t N, typename T>
+Vector<N, T> Vector<N, T>::operator/(const T& s) const {
+	Vector<N, T> out;
+	for (size_t i = 0; i < N; i++) {
+		out[i] = x[i] / s;
+	}
+	return out;
+}
+
+template <size_t N, typename T>
+Vector<N, T>& Vector<N, T>::operator/=(const T& s) {
+	for (size_t i = 0; i < N; i++) {
+		x[i] /= s;
+	}
+	return *this;
+}
+
+template <size_t N, typename T>
 T Vector<N, T>::operator*(const Vector<N, T>& v) const {
 	T out = zero<T>();
 	for (size_t i = 0; i < N; i++) {
@@ -131,7 +153,11 @@ T Vector<N, T>::sqr_magnitude() const {
 
 template <size_t N, typename T>
 T Vector<N, T>::magnitude() const {
-	return sqrt(sqr_magnitude());
+	if constexpr (N != 1) {
+		return sqrt(sqr_magnitude());
+	} else {
+		return abs(x[0]);
+	}
 }
 
 template <size_t N, typename T>
@@ -150,8 +176,8 @@ Vector<N, T> Vector<N, T>::get_part_of_vector_not_in_direction(const Vector<N, T
 }
 
 template <size_t N, typename T>
-void Vector<N, T>::to_zero_vector() {
-	std::fill(x, x + N, zero<T>());
+void Vector<N, T>::to_zero_vector(const void * other_data) {
+	std::fill(x, x + N, zero<T>(other_data));
 }
 
 template <size_t N, typename T>
@@ -162,8 +188,22 @@ Vector<N, T> operator*(T r, const Vector<N, T>& v) {
 template <size_t N, typename T>
 T angle_between_vectors(const Vector<N, T>& v1, const Vector<N, T>& v2) {
 	T numerator = v1 * v2;
-	T denominator = sqrtf(v1.sqr_magnitude() * v2.sqr_magnitude());
+	T denominator = std::sqrt(v1.sqr_magnitude() * v2.sqr_magnitude());
 	return std::acos(numerator / denominator);
+}
+
+template <size_t N, typename T>
+Vector<N, T> Vector<N, T>::member_one(const void * other_data) {
+	Vector<N, T> out;
+	std::fill(out.x, out.x + N, one<T>(other_data));
+	return out;
+}
+
+template <size_t N, typename T>
+Vector<N, T> Vector<N, T>::member_zero(const void * other_data) {
+	Vector<N, T> out;
+	std::fill(out.x, out.x + N, zero<T>(other_data));
+	return out;
 }
 
 }

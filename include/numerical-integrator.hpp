@@ -3,6 +3,7 @@
 #include <concepts>
 #include <cstddef>
 #include "identities.hpp"
+#include "vector.hpp"
 
 namespace cherry::numerics {
 
@@ -51,58 +52,61 @@ constexpr T one_half(const void * other_data = nullptr) {
 	return one_v / (one_v + one_v);
 }
 
-template<typename Input_Type = double>
+template<typename Input_Type>
 struct Interval {
-	Interval(const Input_Type& s, const Input_Type& e, size_t n) :
+	Interval(const Input_Type& s, const Input_Type& e) :
 		start{s},
-		end{e},
-		num{n}
+		end{e}
 	{}
 	Input_Type start, end;
-	size_t num;
 };
 
 // Generalization of a Left, Right, or Midpoint Riemann sum that defaults to a
 // midpoint sum of an integral of a function from ℝ ↦ ℝ.
 template<
-	validation::Valid_Input_Type Input_Type = double,
-	typename Scale_Type = Input_Type,
-	size_t Num_Dimensions = 1
+	size_t Num_Dimensions = 1,
+	validation::Valid_Input_Type Input_Type = Vector<Num_Dimensions, double>,
+	typename Scale_Type = double
 >
 requires validation::Type_And_Scale_Type_Match<Input_Type, Scale_Type>
 class Regular_Input_Value_Generator {
 public:
 	Regular_Input_Value_Generator(
-		const std::array<Interval<Input_Type>, Num_Dimensions>& iv,
-		Input_Type offset = one_half<Input_Type>(),
+		const Interval<Input_Type>& iv,
+		const Vector<Num_Dimensions, size_t>& ns,
+		Scale_Type offset = one_half<Scale_Type>(),
 		Scale_Type one_v = one<Scale_Type>()
 	) :
 		intervals{iv},
+		num_splits{ns},
 		scale{one_v}
 	{
-		std::fill(cur_iteration.begin(), cur_iteration.end(), 0);
-		for (size_t i = 0; i < intervals.size(); i++) {
-			cur_delta_input[i] = (intervals[i].end - intervals[i].start) / intervals[i].num;
-			intervals[i].start += cur_delta_input[i] * offset;
-			intervals[i].end += cur_delta_input[i] * offset;
-			cur_value[i] = intervals[i].start;
+		cur_iteration.to_zero_vector();
+		cur_delta_input = intervals.end - intervals.start;
+		for (size_t i = 0; i < Num_Dimensions; i++) {
+			cur_delta_input[i] /= num_splits[i];
+		}
+		intervals.start += cur_delta_input * offset;
+		intervals.end += cur_delta_input * offset;
+		for (size_t i = 0; i < Num_Dimensions; i++) {
 			scale *= cur_delta_input[i];
 		}
+		cur_value = intervals.start;
 	}
 
-	Input_Type cur_input() const {
+	const Input_Type& cur_input() const {
 		return cur_value;
 	}
 
 	void next_input() {
 		for (size_t i = 0; i < Num_Dimensions; i++) {
 			cur_iteration[i]++;
-			if (cur_iteration[i] != intervals[i].num) {
-				cur_value[i] = intervals[i].start + cur_delta_input[i] * cur_iteration[i];
+			if (cur_iteration[i] != num_splits[i]) {
+				cur_value[i] = intervals.start[i] + cur_delta_input[i] * cur_iteration[i];
 				return;
 			}
 			cur_iteration[i] = 0;
-			cur_value[i] = intervals[i].start;
+			cur_value[i] = intervals.start[i];
 		}
 		not_all_inputs_used = false;
 	}
@@ -122,31 +126,117 @@ public:
 	}
 
 	void reset() {
-		std::fill(cur_iteration.begin(), cur_iteration.end(), 0);
-		for (size_t i = 0; i < intervals.size(); i++) {
-			cur_delta_input[i] = (intervals[i].end - intervals[i].start) / intervals[i].num;
-			cur_value[i] = intervals[i].start;
+		cur_iteration.to_zero_vector();
+		cur_delta_input = intervals.end - intervals.start;
+		for (size_t i = 0; i < Num_Dimensions; i++) {
+			cur_delta_input[i] /= num_splits[i];
 		}
+		cur_value = intervals.start;
 	}
 private:
-	std::array<Interval<Input_Type>, Num_Dimensions> intervals;
-	std::array<size_t, Num_Dimensions> cur_iteration;
-	std::array<Input_Type, Num_Dimensions> cur_value;
-	std::array<Input_Type, Num_Dimensions> cur_delta_input;
+	Interval<Input_Type> intervals;
+	Vector<Num_Dimensions, size_t> num_splits;
+	Vector<Num_Dimensions, size_t> cur_iteration;
+	Input_Type cur_value;
+	Input_Type cur_delta_input;
 	Scale_Type scale;
 	bool not_all_inputs_used = true;
 };
 
 template<
-	typename Func,
-	validation::Valid_Input_Type Input_Type = double,
-	typename Output_Type = Input_Type,
-	typename Scale_Type = Output_Type,
 	size_t Num_Dimensions = 1,
+	validation::Valid_Input_Type Input_Type = Vector<Num_Dimensions, double>,
+	typename Scale_Type = double
+>
+requires validation::Type_And_Scale_Type_Match<Input_Type, Scale_Type>
+class Simpsons_Rule {
+public:
+	Simpsons_Rule(
+		const Interval<Input_Type>& iv,
+		const Vector<Num_Dimensions, size_t>& ns,
+		Scale_Type offset = one_half<Scale_Type>(),
+		Scale_Type one_v = one<Scale_Type>()
+	) :
+		intervals{iv},
+		num_splits{ns},
+		scale{one_v}
+	{
+		cur_iteration.to_zero_vector();
+		cur_delta_input = intervals.end - intervals.start;
+		for (size_t i = 0; i < Num_Dimensions; i++) {
+			cur_delta_input[i] /= num_splits[i];
+		}
+		intervals.start += cur_delta_input * offset;
+		intervals.end += cur_delta_input * offset;
+		for (size_t i = 0; i < Num_Dimensions; i++) {
+			scale *= cur_delta_input[i];
+		}
+		cur_value = intervals.start;
+	}
+
+	const Input_Type& cur_input() const {
+		return cur_value;
+	}
+
+	void next_input() {
+		for (size_t i = 0; i < Num_Dimensions; i++) {
+			cur_iteration[i]++;
+			if (cur_iteration[i] != num_splits[i]) {
+				cur_value[i] = intervals.start[i] + cur_delta_input[i] * cur_iteration[i];
+				return;
+			}
+			cur_iteration[i] = 0;
+			cur_value[i] = intervals.start[i];
+		}
+		not_all_inputs_used = false;
+	}
+
+	void next_scale() {
+		scale *= 2.0;
+		stage++;
+	}
+
+	bool has_inputs() const {
+		return stage <= 2 * Num_Dimensions;
+	}
+
+	bool has_sub_inputs() const {
+		return has_inputs();
+	}
+
+	Scale_Type cur_scale() const {
+		return scale;
+	}
+
+	void reset() {
+		cur_iteration.to_zero_vector();
+		cur_delta_input = intervals.end - intervals.start;
+		for (size_t i = 0; i < Num_Dimensions; i++) {
+			cur_delta_input[i] /= num_splits[i];
+		}
+		cur_value = intervals.start;
+	}
+private:
+	Interval<Input_Type> intervals;
+	Vector<Num_Dimensions, size_t> num_splits;
+	Vector<Num_Dimensions, size_t> cur_iteration;
+	Input_Type cur_value;
+	Input_Type cur_delta_input;
+	Scale_Type scale;
+	size_t stage = 0;
+	bool not_all_inputs_used = true;
+};
+
+template<
+	typename Func,
+	size_t Num_Dimensions = 1,
+	validation::Valid_Input_Type Input_Type = Vector<Num_Dimensions, double>,
+	typename Output_Type = Input_Type,
+	typename Scale_Type = double,
 	typename Input_Value_Generator = Regular_Input_Value_Generator<
+		Num_Dimensions,
 		Input_Type,
-		Scale_Type,
-		Num_Dimensions
+		Scale_Type
 	>
 >
 requires
